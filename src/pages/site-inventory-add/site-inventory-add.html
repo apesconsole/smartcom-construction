@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Add New Item</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item-group>
+      <ion-item-divider color="primary">Selected Site : {{selectedSite}}</ion-item-divider>
+      <ion-item color="light" *ngFor="let config of configData.items">
+          <ion-label>
+          	{{config.item}}
+          </ion-label>
+          <ion-label>
+            {{config.dimension}}
+          </ion-label>
+          <ion-label>
+            {{config.uom}}
+          </ion-label>
+          <button item-end color="secondary" ion-button (click)="selectconfig(config)"> Add </button>
+      </ion-item> 
+  </ion-item-group>
+  <ion-item-group>
+    <ion-item-divider color="primary">Set Up Item</ion-item-divider>
+	<ion-item color="light">
+		  <ion-label>Item</ion-label>
+		  <ion-input
+		  	disabled="true" 
+			[(ngModel)] = "selectedItem.item" 
+			type="text"   
+			#item="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Quantity</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "selectedItem.quantity" 
+			type="text"   
+			#quantity="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>UOM</ion-label>
+		  <ion-input 
+		    disabled="true"
+			[(ngModel)] = "selectedItem.uom" 
+			type="text"   
+			#uom="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item>
+		<button color="primary" ion-button (click)="saveField()"> Save </button>  
+	</ion-item>
+  </ion-item-group>
+</ion-content>

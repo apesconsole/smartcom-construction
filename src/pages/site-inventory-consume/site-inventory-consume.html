@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Consume Inventory</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item-group>
+      <ion-item-divider color="primary">Active Sites</ion-item-divider>
+      <ion-item color="light" *ngFor="let site of sites">
+          <ion-label>
+            {{site.projectId}}
+          </ion-label>
+          <ion-label>
+            {{site.siteName}}
+          </ion-label>
+          <button ion-button item-end (click)="loadDetail(site)">Load Inventory</button>
+      </ion-item>
+  </ion-item-group>
+  <ion-item-group *ngIf="displayInventroy">
+      <ion-item-divider color="primary">Site Inventory : {{selectedSite}}</ion-item-divider>
+      <p *ngIf="inventory.length == 0">No Data Available</p>
+      <ion-item color="light" *ngFor="let item of inventory">
+          <ion-label>
+            {{item.item}}
+          </ion-label>
+          <ion-label>
+            {{item.quantity}}
+          </ion-label>
+          <ion-label>
+            {{item.uom}}
+          </ion-label>
+          <button ion-button item-end color="secondary" (click)="consumeInventory(item)">Use Item</button>
+      </ion-item>
+  </ion-item-group>
+</ion-content>

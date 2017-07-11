@@ -1,0 +1,17 @@
+<ion-content padding>
+  <ion-list (keypress)="clearMessage($event)">
+      <h1 class="logo"><i>Smart<strong>Com</strong></i></h1>
+      <p class="p-danger">{{message}}</p>
+      <ion-item>
+          <ion-label>Username</ion-label>
+          <ion-input [(ngModel)] = "usercreds.userId" type="text"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label>Password</ion-label>
+          <ion-input [(ngModel)] = "usercreds.password" type="password"></ion-input>
+      </ion-item>
+      <button ion-button large (click)="login(usercreds)" class="aligner" >Login</button>
+  </ion-list>
+  <!--<button ion-button (click)="signup()">Signup</button>-->
+</ion-content>
+

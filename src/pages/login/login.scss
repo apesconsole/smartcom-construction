@@ -1,0 +1,22 @@
+page-login {
+	.logo {
+		margin-left: 15px;
+		padding-top: 50px;
+		color: map-get($colors, primary);
+		font-size: 45px;
+	}
+
+	.aligner {
+		margin: 20px  0 0 15px;
+	}
+
+	ion-label {
+		color: map-get($colors, primary);
+		font-size: 25px;
+	}
+
+	ion-input {
+		color: map-get($colors, dark);
+		font-size: 25px;
+	}
+}

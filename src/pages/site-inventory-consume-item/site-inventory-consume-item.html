@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Consume Item</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item-group>
+    <ion-item-divider color="primary">Selected Site : {{selectedSite}}</ion-item-divider>
+	<ion-item color="light">
+		  <ion-label>Item</ion-label>
+		  <ion-label right>{{selectedItem.item}}</ion-label>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Inventry Quantity</ion-label>
+		  <ion-label right>{{selectedItem.quantity}}</ion-label>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>UOM</ion-label>
+		  <ion-label right>{{selectedItem.uom}}</ion-label>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Requested Quantity</ion-label>
+		  <ion-input 
+			[(ngModel)] = "consumptionDetails.quantity" 
+			type="text"   
+			#qunatity="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item>
+		<button color="secondary" ion-button (click)="saveRequest()"> Save Record </button>   
+	</ion-item>
+  </ion-item-group>
+</ion-content>

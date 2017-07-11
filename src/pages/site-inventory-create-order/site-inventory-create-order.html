@@ -1,0 +1,90 @@
+<!--
+  Generated template for the SiteInventoryCreateOrderPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Create Order</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item-group>
+    <ion-item-divider color="primary">Selected Site : {{selectedSite}}</ion-item-divider>
+	<ion-item color="light">
+		  <ion-label>Order Id</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "orderDetails.orderId" 
+			type="text"   
+			#orderId="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Item</ion-label>
+		  <ion-input
+		  	disabled="true" 
+			[(ngModel)] = "orderDetails.item" 
+			type="text"   
+			#item="ngModel">		
+		  </ion-input>
+		  <ion-label>{{orderDetails.uom}}</ion-label>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Quantity</ion-label>
+		  <ion-input 
+			[(ngModel)] = "orderDetails.quantity" 
+			type="text"   
+			#quantity="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Vendor</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.vendorName" 
+			type="text"   
+			#vendorName="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Contact</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.vendorContact" 
+			type="text"   
+			#vendorContact="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Address</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.vendorAddress" 
+			type="text"   
+			#vendorAddress="ngModel">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item color="light">
+		  <ion-label>Challan</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.challan" 
+			type="text"   
+			#challan="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Invoice</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.invoice" 
+			type="text"   
+			#invoice="ngModel">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item>
+		<button color="danger" ion-button (click)="createOrder()"> Submit Order </button>  
+	</ion-item>
+  </ion-item-group>
+</ion-content>
