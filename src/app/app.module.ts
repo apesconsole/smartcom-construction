@@ -13,6 +13,8 @@ import { LoginPage } from '../pages/login/login';
 import { HomePage }  from '../pages/home/home';
 import { SiteInventoryConfigPage } from '../pages/site-inventory-config/site-inventory-config';
 import { SiteInventoryPage } from '../pages/site-inventory/site-inventory';
+import { SiteCreateTaskPage } from '../pages/site-create-task/site-create-task';
+import { SiteEditTaskPage } from '../pages/site-edit-task/site-edit-task';
 import { SiteInventoryAddPage } from '../pages/site-inventory-add/site-inventory-add';
 import { SiteInventoryEditPage } from '../pages/site-inventory-edit/site-inventory-edit';
 import { SiteInventoryOrdersPage } from '../pages/site-inventory-orders/site-inventory-orders';
@@ -27,6 +29,8 @@ import { SiteInventoryConsumeItemPage } from '../pages/site-inventory-consume-it
     HomePage,
     SiteInventoryConfigPage,
     SiteInventoryPage,
+    SiteCreateTaskPage,
+    SiteEditTaskPage,
     SiteInventoryAddPage,
     SiteInventoryEditPage,
     SiteInventoryOrdersPage,
@@ -46,6 +50,8 @@ import { SiteInventoryConsumeItemPage } from '../pages/site-inventory-consume-it
     HomePage,
     SiteInventoryConfigPage,
     SiteInventoryPage,
+    SiteCreateTaskPage,
+    SiteEditTaskPage,
     SiteInventoryAddPage,
     SiteInventoryEditPage,
     SiteInventoryOrdersPage,

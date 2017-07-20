@@ -13,8 +13,10 @@ export class SiteInventoryCreateOrderPage {
   userId: string;
   message: string;
   selectedSite: string;
-  selectedSiteData = {
+  selectedTask: string;
+  selectedTaskData = {
   	siteId: '',
+    taskId: '',
   	inventory : []
   };
   selectedItem = {
@@ -34,12 +36,14 @@ export class SiteInventoryCreateOrderPage {
   	vendorAddress: '',
   	challan: '',
   	invoice: '',
-	orderStatus: 'Pending',
-	approved: false,
-	updatedBy: '',
-	updateDate: new Date,
-	approvedBy: '',
-	approvalDate: ''	 	
+	  orderStatus: 'Pending',
+	  approved: false,
+    createDate: new Date(),
+    createdBy: '',
+	   updatedBy: '',
+	   updateDate: '',
+	   approvedBy: '',
+	   approvalDate: ''	 	
   }
 
   serverData: any;
@@ -54,19 +58,21 @@ export class SiteInventoryCreateOrderPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
       this.userId = this.navParams.get('userId');
-	  this.selectedSiteData = this.navParams.get('selectedSiteData');
-	  this.selectedSite = this.selectedSiteData.siteId;
+	  this.selectedTaskData = this.navParams.get('selectedTaskData');
+    this.isLocked = false;
+	  this.selectedSite = this.selectedTaskData.siteId;
+    this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
 	  this.canApprove = this.navParams.get('canApprove');
 
 	  this.orderDetails.item = this.selectedItem.item;
 	  this.orderDetails.uom = this.selectedItem.uom;
-	  this.orderDetails.updatedBy = this.userId;
+	  this.orderDetails.createdBy = this.userId;
 	  this.orderDetails.orderId = this.getRandomInt(10000000000, 99999999999);
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedSiteData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -83,6 +89,7 @@ export class SiteInventoryCreateOrderPage {
                     buttons: ['ok']
                 });
                 dataEditFailureAlert.present();
+                this.isLocked = false;
             }
             this.navCtrl.pop();
         }, error => {
@@ -92,19 +99,21 @@ export class SiteInventoryCreateOrderPage {
   }
 
   createOrder(){
-      this.selectedItem.orders.push(this.orderDetails);
-      var newInventry = [];
-      this.selectedSiteData.inventory
-      	.map((elem) => {
-      	  if(elem.item == this.selectedItem.item){
-      	  		elem.orders = this.selectedItem.orders;
-      	  }
-      	  newInventry[newInventry.length] = elem;
-		  return elem;
-	  });
-      this.selectedSiteData.inventory = newInventry;
-
-	  this.saveData();	      
+    if(!this.isLocked){
+        this.isLocked = true;
+        this.selectedItem.orders.push(this.orderDetails);
+        var newInventry = [];
+        this.selectedTaskData.inventory
+        	.map((elem) => {
+        	  if(elem.item == this.selectedItem.item){
+        	  		elem.orders = this.selectedItem.orders;
+        	  }
+          	  newInventry[newInventry.length] = elem;
+    		  return elem;
+    	  });
+        this.selectedTaskData.inventory = newInventry;
+  	    this.saveData();	
+    }      
   }
 
   ionViewDidLoad() {

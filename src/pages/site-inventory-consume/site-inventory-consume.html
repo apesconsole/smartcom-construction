@@ -18,9 +18,29 @@
           <ion-label>
             {{site.siteName}}
           </ion-label>
-          <button ion-button item-end (click)="loadDetail(site)">Load Inventory</button>
+          <button ion-button item-end (click)="loadTaskDetail(site)">Load Inventory</button>
+          <button ion-button item-end  color="secondary" (click)="loadSiteInfo()">Refresh Data</button>
       </ion-item>
   </ion-item-group>
+  <ion-item-group *ngIf="displayTask">
+      <ion-item-divider color="primary">Tasks : {{selectedSite}}</ion-item-divider>
+      <p *ngIf="tasks.length == 0">No Data Available</p>
+      <ion-item color="light" *ngFor="let task of tasks">
+          <ion-label>
+            {{task.taskId}}
+          </ion-label>
+          <ion-label>
+            {{task.taskDescription}}
+          </ion-label>
+          <ion-label>
+            <ion-icon *ngIf="task.taskStatus == 'Waiting'" color="primary" name="done-all"></ion-icon>
+            <ion-icon *ngIf="task.taskStatus == 'Started'" color="secondary" name="done-all"></ion-icon>
+            <ion-icon *ngIf="task.taskStatus == 'Complete'" color="apegrey" name="done-all"></ion-icon>
+            <ion-icon *ngIf="task.taskStatus == 'Hold'" color="apeyellow" name="done-all"></ion-icon>
+          </ion-label>
+          <button ion-button item-end (click)="loadInventoryDetail(task)">Inventory</button>
+      </ion-item> 
+  </ion-item-group>   
   <ion-item-group *ngIf="displayInventroy">
       <ion-item-divider color="primary">Site Inventory : {{selectedSite}}</ion-item-divider>
       <p *ngIf="inventory.length == 0">No Data Available</p>

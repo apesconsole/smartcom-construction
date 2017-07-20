@@ -14,8 +14,10 @@ export class SiteInventoryOrdersPage {
   userId: string;
   message: string;
   selectedSite: string;
-  selectedSiteData = {
+  selectedTask: string;
+  selectedTaskData = {
   	siteId: '',
+    taskId: '',
   	inventory : []
   };
   selectedItem = {
@@ -29,15 +31,16 @@ export class SiteInventoryOrdersPage {
   canApprove = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
-      this.userId = this.navParams.get('userId');
-	  this.selectedSiteData = this.navParams.get('selectedSiteData');
-	  this.selectedSite = this.selectedSiteData.siteId;
+    this.userId = this.navParams.get('userId');
+	  this.selectedTaskData = this.navParams.get('selectedTaskData');
+	  this.selectedSite = this.selectedTaskData.siteId;
+    this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
 	  this.canApprove = this.navParams.get('canApprove');
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedSiteData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -68,8 +71,8 @@ export class SiteInventoryOrdersPage {
 	  	.map((o) => {
 	  		if(o.orderId == order.orderId){
 	  			o.approved = true;
-	  			o.updatedBy = this.userId
-	  			o.updateDate = new Date();
+	  			o.approvedBy = this.userId
+	  			o.approvalDate = new Date();
 
 	  			this.selectedItem.quantity = Number(this.selectedItem.quantity) + Number(o.quantity);
 	  		}
@@ -79,7 +82,7 @@ export class SiteInventoryOrdersPage {
 	  this.selectedItem.orders = newOrders;
 
       var newInventry = [];
-      this.selectedSiteData.inventory
+      this.selectedTaskData.inventory
       	.map((elem) => {
       	  if(elem.item == this.selectedItem.item){
       	  		elem.orders = this.selectedItem.orders;
@@ -88,7 +91,7 @@ export class SiteInventoryOrdersPage {
       	  newInventry[newInventry.length] = elem;
 		  return elem;
 	  });
-      this.selectedSiteData.inventory = newInventry;
+      this.selectedTaskData.inventory = newInventry;
 
 	  this.saveData();	
 
@@ -109,7 +112,7 @@ export class SiteInventoryOrdersPage {
 	  this.selectedItem.orders = newOrders;
 
       var newInventry = [];
-      this.selectedSiteData.inventory
+      this.selectedTaskData.inventory
       	.map((elem) => {
       	  if(elem.item == this.selectedItem.item){
       	  		elem.orders = this.selectedItem.orders;
@@ -117,7 +120,7 @@ export class SiteInventoryOrdersPage {
       	  newInventry[newInventry.length] = elem;
 		  return elem;
 	  });
-      this.selectedSiteData.inventory = newInventry;
+      this.selectedTaskData.inventory = newInventry;
 
 	  this.saveData();	
   }

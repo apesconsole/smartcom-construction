@@ -16,8 +16,10 @@ export class SiteInventoryEditPage {
   userId: string;
   message: string;
   selectedSite: string;
-  selectedSiteData = {
+  selectedTask: string;
+  selectedTaskData = {
   	siteId: '',
+    taskId: '',
   	inventory : []
   };
   selectedItem = {
@@ -32,15 +34,17 @@ export class SiteInventoryEditPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
       this.userId = this.navParams.get('userId');
-	  this.selectedSiteData = this.navParams.get('selectedSiteData');
-	  this.selectedSite = this.selectedSiteData.siteId;
+    //Task Data Contains the Specific Task Inventory
+	  this.selectedTaskData = this.navParams.get('selectedTaskData');
+	  this.selectedSite = this.selectedTaskData.siteId;
+    this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
 	  this.canApprove = this.navParams.get('canApprove');
   }
 
   createOrder(){
     this.navCtrl.push(SiteInventoryCreateOrderPage, {
-        selectedSiteData: this.selectedSiteData,
+        selectedTaskData: this.selectedTaskData,
         userId: this.userId,
         selectedItem: this.selectedItem     
     });
@@ -48,7 +52,7 @@ export class SiteInventoryEditPage {
 
   manageOrders(){
     this.navCtrl.push(SiteInventoryOrdersPage, {
-        selectedSiteData: this.selectedSiteData,
+        selectedTaskData: this.selectedTaskData,
         userId: this.userId,
         selectedItem: this.selectedItem,
         canApprove: this.canApprove     
@@ -60,7 +64,7 @@ export class SiteInventoryEditPage {
           this.navCtrl.pop();
       }
       var newInventry = [];
-      this.selectedSiteData.inventory
+      this.selectedTaskData.inventory
       	.map((elem) => {
       	  if(elem.item == this.selectedItem.item && !this.isLocked){
       	      this.isLocked = true;
@@ -73,7 +77,7 @@ export class SiteInventoryEditPage {
       	  newInventry[newInventry.length] = elem;
 		  return elem;
 	  });
-      this.selectedSiteData.inventory = newInventry;
+      this.selectedTaskData.inventory = newInventry;
       this.saveData();
       */
   }
@@ -83,7 +87,7 @@ export class SiteInventoryEditPage {
           this.navCtrl.pop();
       }
       var newInventry = [];
-      this.selectedSiteData.inventory
+      this.selectedTaskData.inventory
       	.map((elem) => {
       	  if(elem.item == this.selectedItem.item && !this.isLocked){
       	      this.isLocked = true;
@@ -96,12 +100,12 @@ export class SiteInventoryEditPage {
       	  newInventry[newInventry.length] = elem;
 		  return elem;
 	  });
-      this.selectedSiteData.inventory = newInventry;
+      this.selectedTaskData.inventory = newInventry;
       this.saveData();
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedSiteData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

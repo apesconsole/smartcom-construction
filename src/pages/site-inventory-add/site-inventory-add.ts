@@ -14,9 +14,11 @@ export class SiteInventoryAddPage {
   userId: string;
   message: string;
   selectedSite: string;
-  selectedSiteData = {
-  	siteId: '',
-  	inventory : []
+  selectedTask: string;
+  selectedTaskData = {
+    siteId: '',
+    taskId: '',
+    inventory: []
   };
   serverData: any;
   configData = {
@@ -34,8 +36,9 @@ export class SiteInventoryAddPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
       this.userId = this.navParams.get('userId');
-	    this.selectedSiteData = this.navParams.get('selectedSiteData');
-	    this.selectedSite = this.selectedSiteData.siteId;
+	    this.selectedTaskData = this.navParams.get('selectedTaskData');
+	    this.selectedSite = this.selectedTaskData.siteId;
+      this.selectedTask = this.selectedTaskData.taskId;
 	    this.loadInventoryConfig();
   }
 
@@ -60,7 +63,7 @@ export class SiteInventoryAddPage {
           this.navCtrl.pop();
       }
       this.isLocked = true;
-      this.selectedSiteData.inventory.push({
+      this.selectedTaskData.inventory.push({
         "item": this.selectedItem.item,
         "quantity": this.selectedItem.quantity,
         "orders":[],
@@ -70,7 +73,7 @@ export class SiteInventoryAddPage {
         "updatedBy": this.userId
       });
 
-      this.authservice.savesiteinventory(this.selectedSiteData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

@@ -89,6 +89,51 @@ export class AuthService {
         this.destroyUserCredentials();
     }
 
+    //Set Up Task
+    createtask(siteData, taskInventory, taskLabour){
+       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskInventory=' + JSON.stringify(taskInventory) + '&taskLabour=' + JSON.stringify(taskLabour) + '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/createtask', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        });         
+    }
+
+    edittask(siteData){
+       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/edittask', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        }); 
+    }
+    
     //Set Up Inventory
     getinventoryconfig() {
         return new Promise((resolve, reject ) => {
@@ -142,12 +187,12 @@ export class AuthService {
                 }
             });
         });   
-    }   
+    }      
 
-    siteinventory(siteId){
+    siteinventory(siteId, taskId){
         return new Promise((resolve, reject ) => {
             this.loadUserCredentials();
-            this.http.get(this.serverUrl + '/api/loadsiteinventory?userId=' + this.userData.userId + '&siteId=' + siteId + '&token=Bearer ' + this.AuthToken)
+            this.http.get(this.serverUrl + '/api/loadsiteinventory?userId=' + this.userData.userId + '&siteId=' + siteId + '&taskId=' + taskId + '&token=Bearer ' + this.AuthToken)
             .map(res => res.json())
             .subscribe( data => {
                 if(data.success){
@@ -180,5 +225,44 @@ export class AuthService {
                 }
             });
         }); 
-    }  
+    } 
+
+
+    sitelabour(siteId, taskId){
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.get(this.serverUrl + '/api/loadsitelabour?userId=' + this.userData.userId + '&siteId=' + siteId + '&taskId=' + taskId + '&token=Bearer ' + this.AuthToken)
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        });   
+    }
+
+    savesitelabour(siteData) {
+        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) +  '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/savesitelabour', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        }); 
+    }     
 }

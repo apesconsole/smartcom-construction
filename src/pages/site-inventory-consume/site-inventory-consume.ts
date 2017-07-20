@@ -16,11 +16,19 @@ export class SiteInventoryConsumePage {
   message: string ;
   siteData: any;
   sites = [];
+  tasks = [];
   selectedSite: string;
+  selectedTask: string;
+  displayTask = false;
   displayInventroy = false;
   siteInventoryData: any;
   selectedSiteData = {
+    siteId:'',
+    taskList: []
+  }
+  selectedTaskData = {
     siteId: '',
+    taskId: '',
     inventory: []
   };
   inventory = [];
@@ -28,11 +36,14 @@ export class SiteInventoryConsumePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private menu: MenuController, public authservice: AuthService) {
       this.userData = authservice.getDisplayinfo();
-      this.selectedSite = '';
       this.loadSiteInfo();
   }
 
   loadSiteInfo(){
+    this.selectedSite = '';
+    this.selectedTask = '';  
+    this.displayTask = false;
+    this.displayInventroy = false;    
     this.authservice.constructionsites().then(
     data => {
         this.siteData = data;
@@ -44,23 +55,32 @@ export class SiteInventoryConsumePage {
     });
   }
 
-  loadDetail(site){
+  loadTaskDetail(site){
+    this.displayTask = true;
+    this.displayInventroy = false;
     this.selectedSite = site.siteId;
+    this.selectedSiteData = site;
+    this.tasks = this.selectedSiteData.taskList;
+  } 
+
+  loadInventoryDetail(task){
+    this.selectedTask = task.taskId;
     this.displayInventroy = true;
-    this.authservice.siteinventory(site.siteId).then(
+    console.log(this.selectedSiteData.siteId + ', ' + this.selectedTask)
+    this.authservice.siteinventory(this.selectedSiteData.siteId, this.selectedTask).then(
     data => {
         this.siteInventoryData = data;
-        this.selectedSiteData = this.siteInventoryData.data 
-        this.inventory = this.selectedSiteData.inventory;
+        this.selectedTaskData = this.siteInventoryData.data 
+        this.inventory = this.selectedTaskData.inventory;
     }, error => {
        this.navCtrl.setRoot(LoginPage);
        this.message = error.message;
     });    
-  }
+  } 
 
   consumeInventory(item){
     this.navCtrl.push(SiteInventoryConsumeItemPage, {
-        selectedSiteData: this.selectedSiteData,
+        selectedTaskData: this.selectedTaskData,
         userId: this.userData.userId,
         selectedItem: item   
     });  	

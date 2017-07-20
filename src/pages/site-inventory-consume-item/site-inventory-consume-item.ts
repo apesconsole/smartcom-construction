@@ -14,8 +14,10 @@ export class SiteInventoryConsumeItemPage {
   userId: string;
   message: string;
   selectedSite: string;
-  selectedSiteData = {
+  selectedTask: string;
+  selectedTaskData = {
     siteId: '',
+    taskId: '',
     inventory : []
   };
   serverData: any;
@@ -36,27 +38,28 @@ export class SiteInventoryConsumeItemPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
       this.userId = this.navParams.get('userId');
-	    this.selectedSiteData = this.navParams.get('selectedSiteData');
-	    this.selectedSite = this.selectedSiteData.siteId;
+	    this.selectedTaskData = this.navParams.get('selectedTaskData');
+	    this.selectedSite = this.selectedTaskData.siteId;
+      this.selectedTask = this.selectedTaskData.taskId;
       this.selectedItem = this.navParams.get('selectedItem');
       this.consumptionDetails.item = this.selectedItem.item;
       this.consumptionDetails.uom = this.selectedItem.uom;
   }
 
   saveRequest(){
-      if(this.selectedItem.quantity < this.consumptionDetails.quantity){
+      if(this.selectedItem.quantity < this.consumptionDetails.quantity ||
+      this.consumptionDetails.quantity <= 0){
           this.consumptionDetails.quantity = 0;
           let wrongQuantityAlert = this.alertCtrl.create({
               title: 'Warning',
-              subTitle: 'Requested Qauntity Exceeded Inventory',
+              subTitle: 'Invalid Quantity',
               buttons: ['change request']
           });
-          wrongQuantityAlert.present();  
-          this.navCtrl.pop();    
+          wrongQuantityAlert.present();   
           return;
-      }
+      } 
       var newInventry = [];
-      this.selectedSiteData.inventory
+      this.selectedTaskData.inventory
         .map((elem) => {
           if(elem.item == this.selectedItem.item){
               elem.quantity = this.selectedItem.quantity - this.consumptionDetails.quantity;
@@ -65,12 +68,12 @@ export class SiteInventoryConsumeItemPage {
           newInventry[newInventry.length] = elem;
           return elem;
       });
-      this.selectedSiteData.inventory = newInventry;
+      this.selectedTaskData.inventory = newInventry;
       this.saveData();
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedSiteData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
