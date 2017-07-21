@@ -28,12 +28,16 @@ export class SiteInventoryCreateOrderPage {
 
   orderDetails = {
   	item: '',
+    uom: '',
   	quantity: 0,
-  	uom:'',
   	orderId: '',
   	vendorName: '',
   	vendorContact: '',
   	vendorAddress: '',
+    currency: 'INR',
+    unitPrice: 0,
+    tax:0,
+    totalPrice: 0,
   	challan: '',
   	invoice: '',
 	  orderStatus: 'Pending',
@@ -54,6 +58,10 @@ export class SiteInventoryCreateOrderPage {
   	var _min = Math.ceil(min);
   	var _max = Math.floor(max);
   	return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+  }
+
+  setTotalPrice(){
+      this.orderDetails.totalPrice = Number(this.orderDetails.quantity * this.orderDetails.unitPrice) + Number(this.orderDetails.tax);
   }
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){

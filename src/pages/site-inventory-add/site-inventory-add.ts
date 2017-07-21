@@ -69,8 +69,8 @@ export class SiteInventoryAddPage {
         "orders":[],
         "consumption":[],
         "uom": this.selectedItem.uom,
-        "updateDate": new Date(),
-        "updatedBy": this.userId
+        "createDate": new Date(),
+        "createdBy": this.userId
       });
 
       this.authservice.savesiteinventory(this.selectedTaskData).then(

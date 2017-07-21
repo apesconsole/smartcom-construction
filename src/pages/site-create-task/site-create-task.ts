@@ -22,6 +22,9 @@ export class SiteCreateTaskPage {
   taskDetails = {
 	taskId: '',
 	taskDescription: '', 
+  currency: 'INR',
+  estimatedCost: 0,
+  actualCost: 0,
 	estimatedDays: '', 
 	daysRemaining: '', 
 	taskStatus: 'Waiting',

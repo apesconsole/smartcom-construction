@@ -47,22 +47,72 @@
 			<ion-label>{{order.vendorContact}}</ion-label>
 		</ion-item>
 		<ion-item color="light">
+			<ion-label>Currency</ion-label>
+			<ion-label>{{order.currency}}</ion-label>
+		</ion-item>		
+		<ion-item color="light">
+			<ion-label>Unit Price</ion-label>
+			<ion-input
+				*ngIf="!order.approved && order.orderStatus != 'Complete'" 
+				[(ngModel)] = "order.unitPrice" 
+				type="text"   
+				#unitPrice="ngModel"
+				(change) = "setTotalPrice(order)">		
+			</ion-input>
+			<ion-label *ngIf="order.orderStatus == 'Complete'">{{order.unitPrice}}</ion-label>
+		</ion-item>			
+		<ion-item color="light">
 			<ion-label>Quantity</ion-label>
 			<ion-input
 				*ngIf="!order.approved && order.orderStatus != 'Complete'" 
 				[(ngModel)] = "order.quantity" 
 				type="text"   
-				#quantity="ngModel">		
+				#quantity="ngModel"
+				(change) = "setTotalPrice(order)">		
 			</ion-input>
 			<ion-label *ngIf="order.orderStatus == 'Complete'">{{order.quantity}}</ion-label>
-		</ion-item>		
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Tax</ion-label>
+			<ion-input
+				*ngIf="!order.approved && order.orderStatus != 'Complete'" 
+				[(ngModel)] = "order.tax" 
+				type="text"   
+				#tax="ngModel"
+				(change) = "setTotalPrice(order)">		
+			</ion-input>
+			<ion-label *ngIf="order.orderStatus == 'Complete'">{{order.tax}}</ion-label>
+		</ion-item>	
+		<ion-item color="light">
+			<ion-label>Total Price</ion-label>
+			<ion-input
+				disabled="true"
+				*ngIf="!order.approved && order.orderStatus != 'Complete'" 
+				[(ngModel)] = "order.totalPrice" 
+				type="text"   
+				#tax="ngModel">		
+			</ion-input>
+			<ion-label *ngIf="order.orderStatus == 'Complete'">{{order.totalPrice}}</ion-label>
+		</ion-item>									
 		<ion-item color="light">
 			<ion-label>Challan</ion-label>
-			<ion-label>{{order.challan}}</ion-label>
+			<ion-label *ngIf="order.approved || order.orderStatus == 'Complete'">{{order.challan}}</ion-label>
+			<ion-input
+				*ngIf="!order.approved && order.orderStatus != 'Complete'" 
+				[(ngModel)] = "order.challan" 
+				type="text"   
+				#challan="ngModel">		
+			</ion-input>			
 		</ion-item>
 	    <ion-item color="light">	
 			<ion-label>Invoice</ion-label>
-			<ion-label>{{order.invoice}}</ion-label>
+			<ion-label *ngIf="order.approved || order.orderStatus == 'Complete'">{{order.invoice}}</ion-label>
+			<ion-input
+				*ngIf="!order.approved && order.orderStatus != 'Complete'" 
+				[(ngModel)] = "order.invoice" 
+				type="text"   
+				#invoice="ngModel">		
+			</ion-input>			
 		</ion-item>
 		<ion-item *ngIf="!order.approved">
 			<button *ngIf="canApprove && order.orderStatus != 'Complete'" disabled="true" color="light" ion-button> Approve </button> 

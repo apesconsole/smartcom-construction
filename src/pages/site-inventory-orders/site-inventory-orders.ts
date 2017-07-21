@@ -30,6 +30,11 @@ export class SiteInventoryOrdersPage {
   isLocked = false;
   canApprove = false;
 
+
+  setTotalPrice(orderDetails){
+      orderDetails.totalPrice = Number(orderDetails.quantity * orderDetails.unitPrice) + Number(orderDetails.tax);
+  }
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
     this.userId = this.navParams.get('userId');
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');

@@ -44,7 +44,8 @@
 		  </ion-input>
 	</ion-item>
 	<ion-item>
-		<button color="primary" ion-button (click)="createOrder()"> Create Order </button> 
+		<button color="light" ion-button *ngIf="!canCreateNewOrder"> Create Order </button> 
+		<button color="primary" ion-button *ngIf="canCreateNewOrder"(click)="createOrder()"> Create Order </button> 
 		<button color="primary" ion-button (click)="manageOrders()"> Manage Orders </button>  
 	</ion-item>
   </ion-item-group>

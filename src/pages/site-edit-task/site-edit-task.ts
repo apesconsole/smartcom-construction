@@ -23,6 +23,9 @@ export class SiteEditTaskPage {
   taskDetails = {
   	taskId: '',
   	taskDescription: '', 
+    currency: 'INR',
+    estimatedCost: 0,
+    actualCost: 0,
   	estimatedDays: '', 
   	daysRemaining: '', 
   	taskStatus: 'Waiting',
@@ -85,6 +88,7 @@ export class SiteEditTaskPage {
 		  return task;
 	  	});
       	this.selectedSiteData.taskList = newTaskList;
+        this.saveData();
     } 
   }
 
@@ -94,7 +98,7 @@ export class SiteEditTaskPage {
         var newTaskList = [];
         this.selectedSiteData.taskList
       	.map((task) => {
-      	  if(task.item == this.taskDetails.taskId){
+      	  if(task.taskId == this.taskDetails.taskId){
       	  	  task.taskStatus = status;
       	  	  task.updateDate = new Date();
       	  	  task.updatedBy = this.userId;
@@ -104,6 +108,7 @@ export class SiteEditTaskPage {
 		  return task;
 	  	});
       	this.selectedSiteData.taskList = newTaskList;
+        this.saveData();
     }
   }
 

@@ -27,11 +27,11 @@
       <p *ngIf="tasks.length == 0">No Data Available</p>
       <ion-item color="light" *ngFor="let task of tasks">
           <ion-label>
-            {{task.taskId}}
-          </ion-label>
-          <ion-label>
             {{task.taskDescription}}
           </ion-label>
+          <ion-label>
+            Expence:{{task.currency}} {{task.actualCost}}
+          </ion-label>          
           <ion-label>
             <ion-icon *ngIf="task.taskStatus == 'Waiting'" color="primary" name="done-all"></ion-icon>
             <ion-icon *ngIf="task.taskStatus == 'Started'" color="secondary" name="done-all"></ion-icon>
@@ -62,7 +62,8 @@
           <button ion-button item-end  (click)="editinventory(item)">Manage Item</button>
       </ion-item>
       <ion-item>
-        <button ion-button (click)="addinventory()">New Item</button>    
+        <button ion-button color="light" *ngIf="!canCreateNew">New Item</button> 
+        <button ion-button *ngIf="canCreateNew" (click)="addinventory()">New Item</button>    
       </ion-item>
   </ion-item-group>
   <ion-item-group *ngIf="displayLabour">
@@ -72,15 +73,20 @@
           <ion-label>
             {{item.contractor}}
           </ion-label>
-          <ion-label>
-            {{item.contractType}}
-          </ion-label>
+          <ion-label *ngIf="item.contractType == 'per_hour'">Hourly</ion-label>
+          <ion-label *ngIf="item.contractType == 'per_day'">Daily</ion-label>
+          <ion-label *ngIf="item.contractType == 'per_week'">Weekly</ion-label>
+          <ion-label *ngIf="item.contractType == 'per_month'">Monthly</ion-label>
+          <ion-label *ngIf="item.contractType == 'full_payout'">Full Payout</ion-label>
+          <ion-label *ngIf="item.contractType == 'partial_payout'">Partial Payout</ion-label>
           <ion-label>
             {{item.rate}}
           </ion-label>
+          <button ion-button item-end  (click)="editlabour(item)">Manage Labour</button>
       </ion-item>
       <ion-item>
-        <button ion-button >New Labour</button>    
+        <button ion-button color="light" *ngIf="!canCreateNew">New Labour</button> 
+        <button ion-button *ngIf="canCreateNew" (click)="addlabour()">New Labour</button>    
       </ion-item>
   </ion-item-group>  
 </ion-content>

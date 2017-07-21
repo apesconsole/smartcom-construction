@@ -7,7 +7,8 @@ import { SiteCreateTaskPage } from '../site-create-task/site-create-task';
 import { SiteEditTaskPage } from '../site-edit-task/site-edit-task';
 import { SiteInventoryAddPage } from '../site-inventory-add/site-inventory-add';
 import { SiteInventoryEditPage } from '../site-inventory-edit/site-inventory-edit';
-
+import { SiteLabourAddPage } from '../site-labour-add/site-labour-add';
+import { SiteLabourEditPage } from '../site-labour-edit/site-labour-edit';
 
 @IonicPage()
 @Component({
@@ -26,6 +27,7 @@ export class SiteInventoryPage {
   displayTask = false;
   displayInventroy = false;
   displayLabour = false;
+  canCreateNew = true;
   siteInventoryData: any;
   siteLabourData: any;
   selectedSiteData = {
@@ -102,7 +104,8 @@ export class SiteInventoryPage {
         selectedTaskData: this.selectedTaskInventoryData,
         userId: this.userData.userId,
         selectedItem: item,
-        canApprove: canApprove     
+        canApprove: canApprove,
+        canCreateNew: this.canCreateNew     
     });
   }
 
@@ -119,6 +122,7 @@ export class SiteInventoryPage {
     this.selectedTask = task.taskId;
     this.displayInventroy = true;
     this.displayLabour = false;
+    this.canCreateNew = task.taskStatus != 'Complete';
     this.authservice.siteinventory(this.selectedSiteData.siteId, this.selectedTask).then(
     data => {
         this.siteInventoryData = data;
@@ -134,6 +138,7 @@ export class SiteInventoryPage {
     this.selectedTask = task.taskId;
     this.displayInventroy = false;
     this.displayLabour = true;
+    this.canCreateNew = task.taskStatus != 'Complete';
     this.authservice.sitelabour(this.selectedSiteData.siteId, this.selectedTask).then(
     data => {
         this.siteLabourData = data;
@@ -143,6 +148,29 @@ export class SiteInventoryPage {
        this.navCtrl.setRoot(LoginPage);
        this.message = error.message;
     }); 
+  }
+
+  addlabour(){
+    this.navCtrl.push(SiteLabourAddPage, {
+        selectedTaskData: this.selectedTaskLabourData,
+        userId: this.userData.userId       
+    });
+  }
+
+  editlabour(labour){
+    var canApprove = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedTaskLabourData.siteId){
+            canApprove = elem.approve;
+        }
+    });
+    this.navCtrl.push(SiteLabourEditPage, {
+        selectedTaskData: this.selectedTaskLabourData,
+        userId: this.userData.userId,
+        selectedLabour: labour,
+        canApprove: canApprove,
+        canCreateNew: this.canCreateNew     
+    });
   }
 
   ionViewDidLoad() {

@@ -31,6 +31,7 @@ export class SiteInventoryEditPage {
   serverData: any;
   isLocked = false;
   canApprove = false;
+  canCreateNewOrder = true;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
       this.userId = this.navParams.get('userId');
@@ -40,13 +41,14 @@ export class SiteInventoryEditPage {
     this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
 	  this.canApprove = this.navParams.get('canApprove');
+    this.canCreateNewOrder = this.navParams.get('canCreateNew');
   }
 
   createOrder(){
     this.navCtrl.push(SiteInventoryCreateOrderPage, {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
-        selectedItem: this.selectedItem     
+        selectedItem: this.selectedItem   
     });
   }
 

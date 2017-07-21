@@ -33,16 +33,61 @@
 			type="text"   
 			#item="ngModel">		
 		  </ion-input>
-		  <ion-label>{{orderDetails.uom}}</ion-label>
+	</ion-item>
+	<ion-item color="light">
+		<ion-label>Unit of Measure</ion-label>
+		  <ion-input
+		  	disabled="true" 
+			[(ngModel)] = "orderDetails.uom" 
+			type="text"   
+			#uom="ngModel">		
+		  </ion-input>		
+	</ion-item>
+	<ion-item color="light">
+		<ion-label>Currency</ion-label>
+		  <ion-input
+		  	disabled="true" 
+			[(ngModel)] = "orderDetails.currency" 
+			type="text"   
+			#currency="ngModel">		
+		  </ion-input>		
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Unit Price</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.unitPrice" 
+			type="text"   
+			#unitPrice="ngModel"
+			(change) = "setTotalPrice()">		
+		  </ion-input>
 	</ion-item>
 	<ion-item color="light">
 		  <ion-label>Quantity</ion-label>
 		  <ion-input 
 			[(ngModel)] = "orderDetails.quantity" 
 			type="text"   
-			#quantity="ngModel">		
+			#quantity="ngModel"
+			(change) = "setTotalPrice()">			
 		  </ion-input>
 	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Tax</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.tax" 
+			type="text"   
+			#tax="ngModel"
+			(change) = "setTotalPrice()">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item color="light">
+		  <ion-label>Total Price</ion-label>
+		  <ion-input
+		  	disabled="true"
+			[(ngModel)] = "orderDetails.totalPrice" 
+			type="text"   
+			#totalPrice="ngModel">		
+		  </ion-input>
+	</ion-item>	
 	<ion-item color="light">
 		  <ion-label>Vendor</ion-label>
 		  <ion-input

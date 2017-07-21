@@ -43,6 +43,23 @@
 		  </ion-input>
 	</ion-item>
 	<ion-item color="light">
+		  <ion-label>Currency</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "taskDetails.currency" 
+			type="text"   
+			#currency="ngModel">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item color="light">
+		  <ion-label>Estimated Cost</ion-label>
+		  <ion-input 
+			[(ngModel)] = "taskDetails.estimatedCost" 
+			type="text"   
+			#estimatedCost="ngModel">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item color="light">
 		  <ion-label>Estimated Days</ion-label>
 		  <ion-input 
 			[(ngModel)] = "taskDetails.estimatedDays" 
@@ -50,6 +67,15 @@
 			#estimatedDays="ngModel">		
 		  </ion-input>
 	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Actual Cost</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "taskDetails.actualCost" 
+			type="text"   
+			#actualCost="ngModel">		
+		  </ion-input>
+	</ion-item>		
 	<ion-item color="light">
 		  <ion-label>Days Remaining</ion-label>
 		  <ion-input 
@@ -72,7 +98,7 @@
 		<button 
 			*ngIf="taskDetails.taskStatus == 'Started'" 
 			color="primary" 
-			ion-button (click)="editTaskStatus('Start')"> Hold 
+			ion-button (click)="editTaskStatus('Hold')"> Hold 
 		</button>
 		<button 
 			*ngIf="taskDetails.taskStatus != 'Complete'" 

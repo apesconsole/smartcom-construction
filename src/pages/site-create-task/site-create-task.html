@@ -34,6 +34,23 @@
 		  </ion-input>
 	</ion-item>
 	<ion-item color="light">
+		  <ion-label>Currency</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "taskDetails.currency" 
+			type="text"   
+			#currency="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Estimated Cost</ion-label>
+		  <ion-input 
+			[(ngModel)] = "taskDetails.estimatedCost" 
+			type="text"   
+			#estimatedCost="ngModel">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item color="light">
 		  <ion-label>Estimated Days</ion-label>
 		  <ion-input 
 			[(ngModel)] = "taskDetails.estimatedDays" 
