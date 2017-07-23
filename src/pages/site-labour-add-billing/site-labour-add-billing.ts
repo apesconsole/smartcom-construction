@@ -22,6 +22,7 @@ export class SiteLabourAddBillingPage {
   };
   selectedLabour = {
 	  labourId: '',
+    labourDescription: '',
 	  contractor: '',
 	  contractType: '',
 	  rate: 0,

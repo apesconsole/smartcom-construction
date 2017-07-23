@@ -8,85 +8,126 @@
 </ion-header>
 
 
-<ion-content padding>
-  <ion-item-group>
-      <ion-item-divider color="primary">Active Sites</ion-item-divider>
-      <ion-item color="light" *ngFor="let site of sites">
-          <ion-label>
-            {{site.projectId}}
-          </ion-label>
-          <ion-label>
-            {{site.siteName}}
-          </ion-label>
-          <button ion-button item-end (click)="loadTasks(site)">Load Tasks</button>
-          <button ion-button item-end  color="secondary" (click)="loadSiteInfo()">Refresh Data</button>
+<ion-content>
+  <ion-list>
+    <ion-list-header color="primary">
+      Active Sites
+    </ion-list-header>
+    <ion-item-sliding *ngFor="let site of sites">
+      <ion-item color="light">
+        <h2>Project: {{site.projectId}}</h2>
+        <p>Site: {{site.siteName}}</p>
+        <p>{{site.address}}</p>
       </ion-item>
-  </ion-item-group>
-  <ion-item-group *ngIf="displayTask">
-      <ion-item-divider color="primary">Tasks : {{selectedSite}}</ion-item-divider>
-      <p *ngIf="tasks.length == 0">No Data Available</p>
-      <ion-item color="light" *ngFor="let task of tasks">
-          <ion-label>
-            {{task.taskDescription}}
-          </ion-label>
-          <ion-label>
-            Expence:{{task.currency}} {{task.actualCost}}
-          </ion-label>          
-          <ion-label>
-            <ion-icon *ngIf="task.taskStatus == 'Waiting'" color="primary" name="done-all"></ion-icon>
-            <ion-icon *ngIf="task.taskStatus == 'Started'" color="secondary" name="done-all"></ion-icon>
-            <ion-icon *ngIf="task.taskStatus == 'Complete'" color="apegrey" name="done-all"></ion-icon>
-            <ion-icon *ngIf="task.taskStatus == 'Hold'" color="apeyellow" name="done-all"></ion-icon>
-          </ion-label>
-          <button ion-button item-end (click)="loadTaskDetails(task)">Details</button>
-          <button ion-button item-end (click)="loadInventoryDetail(task)">Inventory</button>
-          <button ion-button item-end (click)="loadLabourDetail(task)">Labour</button>
-      </ion-item> 
+      <ion-item-options>
+        <button ion-button color="apemoss" (click)="loadTasks(site)" icon-start>
+          <ion-icon name="list-box"></ion-icon>
+          Load Tasks
+        </button>
+        <button ion-button color="secondary" (click)="loadSiteInfo()" icon-start>
+          <ion-icon name="refresh"></ion-icon>
+          Refresh Data
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-list *ngIf="displayTask">
+    <ion-list-header color="primary">
+      Tasks for Selected Site: {{selectedSite}}
+    </ion-list-header>
+    <ion-item *ngIf="tasks.length == 0">
+      <p>No Data Available</p>
+    </ion-item>
+    <ion-item-sliding *ngFor="let task of tasks">
+      <ion-item color="light">
+        <h2>{{task.taskDescription}}</h2>
+        <p>Expence: {{task.currency}} {{task.actualCost}}</p>
+        <p>Status: {{task.taskStatus}}</p>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="apemoss" (click)="loadInventoryDetail(task)" icon-start>
+          <ion-icon name="pricetag"></ion-icon>
+          Manage Inventory
+        </button>
+        <button ion-button color="primary" (click)="loadLabourDetail(task)" icon-start>
+          <ion-icon name="contact"></ion-icon>
+          Manage Labour
+        </button> 
+        <button ion-button color="secondary" (click)="loadTaskDetails(task)" icon-start>
+          <ion-icon name="settings"></ion-icon>
+          Manage Task
+        </button>       
+      </ion-item-options>
+    </ion-item-sliding>
+    <ion-item>
+        <button ion-button color="primary" (click)="addtask(task)">
+          Add Task
+        </button> 
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="displayInventroy">
+      <ion-list-header color="primary">
+          Site : {{selectedSite}}, Inventory for Task : {{selectedTask}}
+      </ion-list-header>
+      <ion-item *ngIf="inventory.length == 0">
+        <p>No Data Available</p>
+      </ion-item>      
+      <ion-item-sliding *ngFor="let item of inventory">
+          <ion-item color="light">
+            <h2>{{item.item}}</h2>
+            <p>Quantity: {{item.quantity}}</p>
+            <p>Unit of Measure: {{item.uom}}</p>
+          </ion-item>
+          <ion-item-options>
+              <button ion-button color="primary" (click)="editinventory(item)" icon-start>
+                <ion-icon name="pricetag"></ion-icon>
+                Manage Item
+              </button>      
+          </ion-item-options>
+      </ion-item-sliding>
+    <ion-item>
+        <button ion-button color="light"  *ngIf="!canCreateNew">
+          New Item
+        </button>
+        <button ion-button color="primary" *ngIf="canCreateNew" (click)="addinventory(item)">
+          New Item
+        </button>  
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="displayLabour">
+      <ion-list-header color="primary">
+          Site : {{selectedSite}}, Labour for Task : {{selectedTask}}
+      </ion-list-header>
+      <ion-item *ngIf="labour.length == 0">
+        <p>No Data Available</p>
+      </ion-item>
+      <ion-item-sliding *ngFor="let item of labour">
+          <ion-item color="light">
+            <h2>{{item.contractor}}</h2>
+            <p>{{item.labourDescription}}</p>
+            <p *ngIf="item.contractType == 'per_hour'">Hourly</p>
+            <p *ngIf="item.contractType == 'per_day'">Daily<</p>
+            <p *ngIf="item.contractType == 'per_week'">Weekly</p>
+            <p *ngIf="item.contractType == 'per_month'">Monthly</p>
+            <p *ngIf="item.contractType == 'full_payout'">Full Payout</p>
+            <p *ngIf="item.contractType == 'partial_payout'">Partial Payout</p>
+            <p>{{item.rate}} {{item.currency}}</p>
+          </ion-item>
+          <ion-item-options>
+              <button ion-button color="primary" (click)="editlabour(item)" icon-start>
+                <ion-icon name="contact"></ion-icon>
+                Manage Labour
+              </button>             
+          </ion-item-options>
+      </ion-item-sliding>
       <ion-item>
-        <button ion-button (click)="addtask()">New Task</button>    
+        <button ion-button color="light" *ngIf="!canCreateNew">
+          New Labour
+        </button>
+        <button ion-button color="primary" *ngIf="canCreateNew" (click)="addlabour(item)">
+          New Labour
+        </button>  
       </ion-item>
-  </ion-item-group> 
-  <ion-item-group *ngIf="displayInventroy">
-      <ion-item-divider color="primary">Site : {{selectedSite}}, Inventory for Task : {{selectedTask}}</ion-item-divider>
-      <p *ngIf="inventory.length == 0">No Data Available</p>
-      <ion-item color="light" *ngFor="let item of inventory">
-          <ion-label>
-            {{item.item}}
-          </ion-label>
-          <ion-label>
-            {{item.quantity}}
-          </ion-label>
-          <ion-label>
-            {{item.uom}}
-          </ion-label>
-          <button ion-button item-end  (click)="editinventory(item)">Manage Item</button>
-      </ion-item>
-      <ion-item>
-        <button ion-button color="light" *ngIf="!canCreateNew">New Item</button> 
-        <button ion-button *ngIf="canCreateNew" (click)="addinventory()">New Item</button>    
-      </ion-item>
-  </ion-item-group>
-  <ion-item-group *ngIf="displayLabour">
-      <ion-item-divider color="primary">Site : {{selectedSite}}, Labour for Task : {{selectedTask}}</ion-item-divider>
-      <p *ngIf="labour.length == 0">No Data Available</p>
-      <ion-item color="light" *ngFor="let item of labour">
-          <ion-label>
-            {{item.contractor}}
-          </ion-label>
-          <ion-label *ngIf="item.contractType == 'per_hour'">Hourly</ion-label>
-          <ion-label *ngIf="item.contractType == 'per_day'">Daily</ion-label>
-          <ion-label *ngIf="item.contractType == 'per_week'">Weekly</ion-label>
-          <ion-label *ngIf="item.contractType == 'per_month'">Monthly</ion-label>
-          <ion-label *ngIf="item.contractType == 'full_payout'">Full Payout</ion-label>
-          <ion-label *ngIf="item.contractType == 'partial_payout'">Partial Payout</ion-label>
-          <ion-label>
-            {{item.rate}}
-          </ion-label>
-          <button ion-button item-end  (click)="editlabour(item)">Manage Labour</button>
-      </ion-item>
-      <ion-item>
-        <button ion-button color="light" *ngIf="!canCreateNew">New Labour</button> 
-        <button ion-button *ngIf="canCreateNew" (click)="addlabour()">New Labour</button>    
-      </ion-item>
-  </ion-item-group>  
+  </ion-list>
 </ion-content>

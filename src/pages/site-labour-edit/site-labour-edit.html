@@ -13,7 +13,7 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-item-group>
     <ion-item-divider color="primary">Selected Site : {{selectedSite}}, Task Id {{selectedTask}}</ion-item-divider>
 	<ion-item color="light">
@@ -25,6 +25,15 @@
 			#labourId="ngModel">		
 		  </ion-input>
 	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Description</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "selectedLabour.labourDescription" 
+			type="text"   
+			#labourDescription="ngModel">		
+		  </ion-input>
+	</ion-item>	
 	<ion-item color="light">
 		  <ion-label>Contractor</ion-label>
 		  <ion-input 

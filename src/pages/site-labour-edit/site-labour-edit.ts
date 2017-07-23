@@ -25,6 +25,7 @@ export class SiteLabourEditPage {
   };
   selectedLabour = {
 	labourId: '',
+  labourDescription: '',
 	contractor: '',
 	contractType: '',
 	rate: 0,

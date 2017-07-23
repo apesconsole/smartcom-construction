@@ -8,7 +8,7 @@ export class AuthService {
     isLoggedin: boolean;
     AuthToken;
     userData: any;
-    //serverUrl = 'http://localhost:3003';
+    serverUrl = 'http://localhost:3003';
     
     serverDataSet: any;
 
@@ -89,6 +89,22 @@ export class AuthService {
         this.destroyUserCredentials();
     }
 
+    constructionsitematrix(){
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.get(this.serverUrl + '/api/loadconstructionsitematrix?userId=' + this.userData.userId + '&token=Bearer ' + this.AuthToken)
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        });
+    }
+
     //Set Up Task
     createtask(siteData, taskInventory, taskLabour){
        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskInventory=' + JSON.stringify(taskInventory) + '&taskLabour=' + JSON.stringify(taskLabour) + '&token=Bearer ' + this.AuthToken;
@@ -150,6 +166,7 @@ export class AuthService {
             });
         });
     }
+    
     saveinventoryconfig(configData) {
         var postData = 'userId=' + this.userData.userId + '&configData=' + JSON.stringify(configData) +  '&token=Bearer ' + this.AuthToken;
         

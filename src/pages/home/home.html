@@ -3,12 +3,33 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>{{name}}</ion-title>
+    <ion-title>Dashbord/{{name}}</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-    <p>
-      {{message}}
-    </p>
+<ion-content>
+  <ion-card *ngFor="let site of sites">
+
+    <ion-item color="light">
+      <h2>Project: {{site.projectId}}</h2>
+      <p>Site: {{site.siteName}}</p>
+      <p>{{site.address}}</p>
+    </ion-item>
+    <ion-card-content>
+      <ion-item>
+        <h2>Task Matrix</h2>
+        <p>Completed : {{site.taskMatrix.totalCompletedTasks}}</p>
+        <p>Waiting   : {{site.taskMatrix.totalWaitingTasks}}</p>
+        <p>Held      : {{site.taskMatrix.totalHeldTasks}}</p>
+        <p>Running   : {{site.taskMatrix.totalRunningTasks}}</p>
+      </ion-item>
+      <ion-item>
+        <h2>Task Financials</h2>
+        <p>Total Cost : {{site.taskMatrix.currency}} {{site.taskMatrix.totalCost}}</p>
+        <p>Estimated Cost   : {{site.taskMatrix.currency}} {{site.taskMatrix.totalEstimatedCost}}</p>
+        <p *ngIf="site.taskMatrix.deviation > 0">Deviation      : {{site.taskMatrix.currency}} {{site.taskMatrix.deviation}}</p>
+        <p *ngIf="site.taskMatrix.deviation > 0">Savings   : {{site.taskMatrix.currency}} {{site.taskMatrix.savings}}</p>
+      </ion-item>      
+    </ion-card-content>     
+  </ion-card>
 </ion-content>

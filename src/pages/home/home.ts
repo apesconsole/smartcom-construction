@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, Events } from 'ionic-angular';
+import { IonicPage, NavController, MenuController, NavParams, AlertController, Events } from 'ionic-angular';
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
 
@@ -11,23 +11,30 @@ import { LoginPage } from '../login/login';
 export class HomePage {
 
   userData: any;
+  siteData: any;
+  sites = [];
   message: string ;
   name = '';
   type = '';
 
   pages: Array<{type: string, title: string, component: string}>;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events) {
-      
+  constructor(public navCtrl: NavController, private menu: MenuController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events) {
       this.userData = {};
-      this.message = null;
       this.name = '';
       this.type = '';
       this.getinfo();
   }
 
-  messageBox = {
-     construction: 'Manage Sites, Analyse Construction Data remotely'
+  loadSiteMatrix(){
+      this.authservice.constructionsitematrix().then(
+        data => {
+            this.siteData = data;
+            this.sites = this.siteData.data;
+        }, error => {
+            this.navCtrl.setRoot(LoginPage);
+            this.message = error.message;
+      });
   }
 
   getinfo() {
@@ -39,8 +46,7 @@ export class HomePage {
           this.type = this.userData.data.type;
           this.pages = this.userData.menu;
           this.events.publish('loadmenu', this.pages);
-
-          this.message = this.messageBox[this.type];
+          this.loadSiteMatrix();
     	}, 
       error => {
           this.navCtrl.setRoot(LoginPage, {
@@ -51,6 +57,7 @@ export class HomePage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad HomePage');
+    this.menu.swipeEnable(true, 'menu'); 
   }
 
 }

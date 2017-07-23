@@ -24,6 +24,7 @@ export class SiteLabourAddPage {
 
   labourData = {
   	labourId: '',
+    labourDescription: '',
   	contractor: '',
   	contractType: '',
   	rate: 0,
