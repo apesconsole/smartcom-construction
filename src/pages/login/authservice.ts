@@ -8,7 +8,7 @@ export class AuthService {
     isLoggedin: boolean;
     AuthToken;
     userData: any;
-    serverUrl = 'http://localhost:3003';
+    //serverUrl = 'http://localhost:3003';
     
     serverDataSet: any;
 
@@ -166,7 +166,7 @@ export class AuthService {
             });
         });
     }
-    
+
     saveinventoryconfig(configData) {
         var postData = 'userId=' + this.userData.userId + '&configData=' + JSON.stringify(configData) +  '&token=Bearer ' + this.AuthToken;
         

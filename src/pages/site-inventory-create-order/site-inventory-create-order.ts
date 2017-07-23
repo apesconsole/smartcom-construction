@@ -38,6 +38,8 @@ export class SiteInventoryCreateOrderPage {
     unitPrice: 0,
     tax:0,
     totalPrice: 0,
+    payments: [],
+    totalPayment: 0,
   	challan: '',
   	invoice: '',
 	  orderStatus: 'Pending',

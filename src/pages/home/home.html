@@ -8,27 +8,36 @@
 </ion-header>
 
 <ion-content>
+
+  <ion-card *ngIf="sites.length == 0">
+    <ion-item color="light">
+      <p>No Sites Have Tasks Yet</p>
+    </ion-item>
+  </ion-card>
+
   <ion-card *ngFor="let site of sites">
 
-    <ion-item color="light">
-      <h2>Project: {{site.projectId}}</h2>
+    <ion-item color="apemoss">
+      <h2><strong>Project: {{site.projectId}}</strong></h2>
       <p>Site: {{site.siteName}}</p>
       <p>{{site.address}}</p>
     </ion-item>
     <ion-card-content>
       <ion-item>
-        <h2>Task Matrix</h2>
+        <h1>Task Status</h1>
         <p>Completed : {{site.taskMatrix.totalCompletedTasks}}</p>
         <p>Waiting   : {{site.taskMatrix.totalWaitingTasks}}</p>
         <p>Held      : {{site.taskMatrix.totalHeldTasks}}</p>
         <p>Running   : {{site.taskMatrix.totalRunningTasks}}</p>
       </ion-item>
       <ion-item>
-        <h2>Task Financials</h2>
-        <p>Total Cost : {{site.taskMatrix.currency}} {{site.taskMatrix.totalCost}}</p>
+        <h1>Task Financials</h1>
+        <p>Actual Cost : {{site.taskMatrix.currency}} {{site.taskMatrix.totalCost}}</p>
         <p>Estimated Cost   : {{site.taskMatrix.currency}} {{site.taskMatrix.totalEstimatedCost}}</p>
+        <p>Total Payments   : {{site.taskMatrix.currency}} {{site.taskMatrix.totalPayment}}</p>
+        <hr/>
         <p *ngIf="site.taskMatrix.deviation > 0">Deviation      : {{site.taskMatrix.currency}} {{site.taskMatrix.deviation}}</p>
-        <p *ngIf="site.taskMatrix.deviation > 0">Savings   : {{site.taskMatrix.currency}} {{site.taskMatrix.savings}}</p>
+        <p *ngIf="site.taskMatrix.savings > 0">Remaining Budget   : {{site.taskMatrix.currency}} {{site.taskMatrix.savings}}</p>
       </ion-item>      
     </ion-card-content>     
   </ion-card>

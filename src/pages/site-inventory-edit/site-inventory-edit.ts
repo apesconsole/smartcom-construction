@@ -26,6 +26,8 @@ export class SiteInventoryEditPage {
   	item: '',
   	quantity: 0,
   	uom:'',
+    totalPrice: 0,
+    totalPayment: 0,    
   	orders: []
   }
   serverData: any;
@@ -95,7 +97,7 @@ export class SiteInventoryEditPage {
       	      this.isLocked = true;
       	  	  elem.quantity = this.selectedItem.quantity;
       	  	  elem.approved = true;
-      	  	  elem.approvedBy = this.userId,
+      	  	  elem.approvedBy = this.userId;
       	  	  elem.approvalDate = new Date();
       	  	  console.log('Changed -> ' + elem.item);
       	  }

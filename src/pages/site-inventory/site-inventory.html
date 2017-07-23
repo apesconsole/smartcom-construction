@@ -42,7 +42,8 @@
     <ion-item-sliding *ngFor="let task of tasks">
       <ion-item color="light">
         <h2>{{task.taskDescription}}</h2>
-        <p>Expence: {{task.currency}} {{task.actualCost}}</p>
+        <p>Total Cost: {{task.currency}} {{task.actualCost}}</p>
+        <p>Total Payment: {{task.totalPayment}}</p>
         <p>Status: {{task.taskStatus}}</p>
       </ion-item>
       <ion-item-options>
@@ -78,6 +79,8 @@
             <h2>{{item.item}}</h2>
             <p>Quantity: {{item.quantity}}</p>
             <p>Unit of Measure: {{item.uom}}</p>
+            <p>Total Price: {{item.totalPrice}}</p>
+            <p>Total Payment: {{item.totalPayment}}</p>            
           </ion-item>
           <ion-item-options>
               <button ion-button color="primary" (click)="editinventory(item)" icon-start>
@@ -87,7 +90,7 @@
           </ion-item-options>
       </ion-item-sliding>
     <ion-item>
-        <button ion-button color="light"  *ngIf="!canCreateNew">
+        <button ion-button color="light" *ngIf="!canCreateNew">
           New Item
         </button>
         <button ion-button color="primary" *ngIf="canCreateNew" (click)="addinventory(item)">
@@ -106,13 +109,14 @@
           <ion-item color="light">
             <h2>{{item.contractor}}</h2>
             <p>{{item.labourDescription}}</p>
-            <p *ngIf="item.contractType == 'per_hour'">Hourly</p>
-            <p *ngIf="item.contractType == 'per_day'">Daily<</p>
-            <p *ngIf="item.contractType == 'per_week'">Weekly</p>
-            <p *ngIf="item.contractType == 'per_month'">Monthly</p>
-            <p *ngIf="item.contractType == 'full_payout'">Full Payout</p>
-            <p *ngIf="item.contractType == 'partial_payout'">Partial Payout</p>
-            <p>{{item.rate}} {{item.currency}}</p>
+            <p *ngIf="item.contractType == 'per_hour'">Hourly : {{item.currency}} {{item.rate}} </p>
+            <p *ngIf="item.contractType == 'per_day'">Daily : {{item.currency}} {{item.rate}} </p>
+            <p *ngIf="item.contractType == 'per_week'">Weekly : {{item.currency}} {{item.rate}} </p>
+            <p *ngIf="item.contractType == 'per_month'">Monthly : {{item.currency}} {{item.rate}} </p>
+            <p *ngIf="item.contractType == 'full_payout'">Full Payout : {{item.currency}} {{item.rate}} </p>
+            <p *ngIf="item.contractType == 'partial_payout'">Partial Payout : {{item.currency}} {{item.rate}} </p>
+            <p>Total Bill: {{item.totalBill}}</p>
+            <p>Total Payment: {{item.totalPayment}}</p>
           </ion-item>
           <ion-item-options>
               <button ion-button color="primary" (click)="editlabour(item)" icon-start>

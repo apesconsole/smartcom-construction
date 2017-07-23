@@ -52,35 +52,65 @@
         Approval Date: {{bill.approvalDate}}
       </ion-label> 
   	</ion-item>  			
-	<ion-item color="light" *ngIf="!bill.approved">
-		  <ion-label>Amount</ion-label>
-		  <ion-input 
-			[(ngModel)] = "bill.billingAmount" 
-			type="text"   
-			#billingAmount="ngModel">		
-		  </ion-input>
-	</ion-item>	
-	<ion-item color="light" *ngIf="bill.approved">
-		  <ion-label>Amount</ion-label>
-		  <ion-label>{{bill.billingAmount}}</ion-label>
-	</ion-item>				
-	<ion-item color="light" *ngIf="!bill.approved">
-		  <ion-label>Invoice</ion-label>
-		  <ion-input 
-			[(ngModel)] = "bill.invoice" 
-			type="text"   
-			#invoice="ngModel">		
-		  </ion-input>
-	</ion-item>	
-	<ion-item color="light" *ngIf="bill.approved">
-		  <ion-label>Invoice</ion-label>
-		  <ion-label>{{bill.invoice}}</ion-label>
-	</ion-item>			
-	<ion-item *ngIf="!bill.approved">
-      	<button item-end color="primary" ion-button (click)="updateBilling(bill)"> Update </button>  	
-      	<button item-end color="secondary" ion-button (click)="approveBilling(bill)"> Approve </button>
-      	<button item-end color="danger" ion-button (click)="removeBilling(bill)"> Delete </button>
-	</ion-item> 
-		
+  	<ion-item color="light" *ngIf="!bill.approved">
+  		  <ion-label>Amount</ion-label>
+        {{selectedLabour.currency}}
+  		  <ion-input 
+  			[(ngModel)] = "bill.billingAmount" 
+  			type="text"   
+  			#billingAmount="ngModel">		
+  		  </ion-input>
+  	</ion-item>	
+  	<ion-item color="light" *ngIf="bill.approved">
+  		  <ion-label>Amount</ion-label>
+  		  <ion-label>{{bill.billingAmount}}</ion-label>
+  	</ion-item>				
+  	<ion-item color="light" *ngIf="!bill.approved">
+  		  <ion-label>Invoice</ion-label>
+  		  <ion-input 
+  			[(ngModel)] = "bill.invoice" 
+  			type="text"   
+  			#invoice="ngModel">		
+  		  </ion-input>
+  	</ion-item>	
+  	<ion-item color="light" *ngIf="bill.approved">
+  		  <ion-label>Invoice</ion-label>
+  		  <ion-label>{{bill.invoice}}</ion-label>
+  	</ion-item>	
+    <ion-item color="light" *ngIf="bill.approved">
+        <ion-label>Payment So Far {{selectedLabour.currency}}</ion-label>
+        <ion-input 
+        disabled=true
+        [(ngModel)] = "bill.totalPayment" 
+        type="text"   
+        #totalPayment="ngModel">   
+        </ion-input>
+    </ion-item>  
+    <ion-item color="light" *ngIf="bill.approved && bill.billingAmount > bill.totalPayment">
+        <ion-label>Ballance {{selectedLabour.currency}}</ion-label>
+        <ion-input 
+        disabled=true
+        [(ngModel)] = "bill.ballance" 
+        type="text"   
+        #ballance="ngModel">   
+        </ion-input>
+    </ion-item>       
+    <ion-item color="light" *ngIf="bill.approved && bill.billingAmount > bill.totalPayment">
+        <ion-label>Payment {{selectedLabour.currency}}</ion-label>
+        <ion-input 
+        [(ngModel)] = "bill.paidAmount" 
+        type="text"
+        (change)="setBallance(bill)"   
+        #paidAmount="ngModel">   
+        </ion-input>
+    </ion-item> 		
+  	<ion-item *ngIf="!bill.approved">
+        	<button item-end color="primary" ion-button (click)="updateBilling(bill)"> Update </button>  	
+        	<button item-end color="secondary" ion-button (click)="approveBilling(bill)"> Approve </button>
+        	<button item-end color="danger" ion-button (click)="removeBilling(bill)"> Delete </button>
+  	</ion-item> 
+    <ion-item *ngIf="bill.approved && bill.billingAmount > bill.totalPayment">
+        <button item-end color="warining" ion-button (click)="payBill(bill)"> Pay </button>
+  	</ion-item>
   </ion-item-group>
 </ion-content>

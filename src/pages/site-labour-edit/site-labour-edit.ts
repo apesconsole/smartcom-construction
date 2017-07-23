@@ -31,6 +31,8 @@ export class SiteLabourEditPage {
 	rate: 0,
 	currency: 'INR',
 	count: 0,
+  totalBill: 0,
+  totalPayment: 0,
   billing: [],
 	createDate: '',
 	createdBy: '',

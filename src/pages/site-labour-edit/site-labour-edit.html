@@ -78,7 +78,25 @@
 			type="text"   
 			#count="ngModel">		
 		  </ion-input>
-	</ion-item>			
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Total Bill</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "selectedLabour.totalBill" 
+			type="text"   
+			#totalBill="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Total Payment</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "selectedLabour.totalPayment" 
+			type="text"   
+			#totalBill="ngModel">		
+		  </ion-input>
+	</ion-item>					
 	<ion-item>
 		<button 
 			color="primary" 

@@ -69,6 +69,8 @@ export class SiteInventoryAddPage {
         "orders":[],
         "consumption":[],
         "uom": this.selectedItem.uom,
+        "totalPrice": 0,
+        "totalPayment": 0, 
         "createDate": new Date(),
         "createdBy": this.userId
       });

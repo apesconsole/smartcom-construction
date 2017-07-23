@@ -25,13 +25,21 @@
 		  </ion-input>
 	</ion-item>
 	<ion-item color="light">
+		  <ion-label>Description</ion-label>
+		  <ion-input 
+			[(ngModel)] = "labourData.labourDescription" 
+			type="text"   
+			#labourDescription="ngModel">		
+		  </ion-input>
+	</ion-item>		
+	<ion-item color="light">
 		  <ion-label>Contractor</ion-label>
 		  <ion-input 
 			[(ngModel)] = "labourData.contractor" 
 			type="text"   
 			#contractor="ngModel">		
 		  </ion-input>
-	</ion-item>	
+	</ion-item>		
 	<ion-item color="light">
 		  <ion-label>Contract Type</ion-label>
 		  <ion-select 

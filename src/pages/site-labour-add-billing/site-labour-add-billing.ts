@@ -28,7 +28,7 @@ export class SiteLabourAddBillingPage {
 	  rate: 0,
 	  currency: 'INR',
 	  count: 0,
-      billing: [],
+    billing: [],
 	  createDate: '',
 	  createdBy: '',
 	  updatedBy: '',
@@ -43,14 +43,15 @@ export class SiteLabourAddBillingPage {
   	  billingId: '',
   	  billingAmount: 0,
   	  invoice: '',
+      totalPayment: 0,
+      payments: [],
   	  createDate: new Date(),
   	  createdBy: '',
-	  updatedBy: '',
-	  updateDate: '',
-	  approvedBy: '',
-	  approvalDate: '',
-	  approved: false,
-	  billingStatus: '',
+  	  updatedBy: '',
+  	  updateDate: '',
+  	  approvedBy: '',
+  	  approvalDate: '',
+  	  approved: false
   }
   serverData: any;
   isLocked = false;

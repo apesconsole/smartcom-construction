@@ -28,7 +28,9 @@ export class SiteLabourEditBillingPage {
 	  rate: 0,
 	  currency: 'INR',
 	  count: 0,
-      billing: [],
+    totalBill: 0,
+    totalPayment: 0,
+    billing: [],
 	  createDate: '',
 	  createdBy: '',
 	  updatedBy: '',
@@ -39,8 +41,31 @@ export class SiteLabourEditBillingPage {
 	  active: true
   }
 
+  bill = {
+      billingId: '',
+      billingAmount: 0,
+      invoice: '',
+      totalPayment: 0,
+      payments: [],
+      createDate: new Date(),
+      createdBy: '',
+      updatedBy: '',
+      updateDate: '',
+      approvedBy: '',
+      approvalDate: '',
+      approved: false,
+      ballance: 0,
+      paidAmount: 0
+  }
+
   serverData: any;
   isLocked = false;
+
+  getRandomInt(min, max) {
+    var _min = Math.ceil(min);
+    var _max = Math.floor(max);
+    return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+  }
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
       this.userId = this.navParams.get('userId');
@@ -49,6 +74,7 @@ export class SiteLabourEditBillingPage {
 	  this.selectedSite = this.selectedTaskData.siteId;
       this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedLabour = this.navParams.get('selectedLabour');
+    this.bill.paidAmount = 0;
   }
 
   saveData(){
@@ -85,10 +111,10 @@ export class SiteLabourEditBillingPage {
 	    this.selectedTaskData.labour
 	        .map((elem) => {
 	          if(elem.labourId == this.selectedLabour.labourId){
-			     let index = elem.billing.indexOf(selectedBill);
-			     if(index > -1){
-			        elem.billing.splice(index, 1);
-			     }
+    			     let index = elem.billing.indexOf(selectedBill);
+    			     if(index > -1){
+    			        elem.billing.splice(index, 1);
+    			     }
 	          }
 	          newLabour[newLabour.length] = elem;
 	          return elem;
@@ -108,9 +134,10 @@ export class SiteLabourEditBillingPage {
 	          	for (var i in elem.billing) {
           	 		if(elem.billing[i].billingId ==  eval(selectedBill.billingId)){
           	 			console.log(selectedBill.billingId);
+                  elem.totalBill = Number(elem.totalBill) + Number(elem.billing[i].billingAmount);
           	 			elem.billing[i].approved = true;
           	 			elem.billing[i].approvedBy = this.userId;
-						elem.billing[i].approvalDate = new Date();
+						      elem.billing[i].approvalDate = new Date();
           	 		}
 	          	}
 	          }
@@ -135,7 +162,7 @@ export class SiteLabourEditBillingPage {
           	 			elem.billing[i].billingAmount = selectedBill.billingAmount;
           	 			elem.billing[i].invoice = selectedBill.invoice;
           	 			elem.billing[i].updatedBy = this.userId;
-						elem.billing[i].updateDate = new Date();
+						      elem.billing[i].updateDate = new Date();
           	 		}
 	          	}
 	          }
@@ -147,6 +174,53 @@ export class SiteLabourEditBillingPage {
   	}
   }
 
+  payBill(selectedBill){
+    if(!this.isLocked){
+      this.isLocked = true;
+      var newLabour = [];
+      this.selectedTaskData.labour
+          .map((elem) => {
+            if(elem.labourId == this.selectedLabour.labourId){
+              for (var i in elem.billing) {
+                if(elem.billing[i].billingId ==  eval(selectedBill.billingId)){
+                  if(elem.billing[i].billingAmount >= Number(selectedBill.paidAmount) && 
+                    (Number(elem.billing[i].billingAmount) - Number(selectedBill.ballance)) >= 0){
+                    elem.billing[i].payments.push({
+                        paymentId: this.getRandomInt(10000000000, 99999999999),
+                        payment: Number(selectedBill.paidAmount),
+                        paidBy: this.userId,
+                        paymentDate: new Date()
+                    });
+                    elem.billing[i].totalPayment = Number(elem.billing[i].totalPayment) + Number(selectedBill.paidAmount);
+                    elem.totalPayment = Number(elem.totalPayment) + Number(selectedBill.paidAmount);
+                  } else {
+                    selectedBill.paidAmount = 0;
+                    let invalidPaymentAlert = this.alertCtrl.create({
+                        title: 'Error',
+                        subTitle: 'Invalid Amount',
+                        buttons: ['ok']
+                    });
+                    invalidPaymentAlert.present();
+                    return;
+                  }
+                }
+              }
+            }
+            newLabour[newLabour.length] = elem;
+            return elem;
+      });
+      if(Number(selectedBill.paidAmount) > 0 ){
+          this.selectedTaskData.labour = newLabour;
+          selectedBill.paidAmount = 0;
+          this.saveData();
+      } else this.isLocked = false;   
+    }
+  }
+
+  setBallance(selectedBill){
+    selectedBill.ballance = Number(selectedBill.billingAmount) - Number(selectedBill.totalPayment) - Number(selectedBill.paidAmount);
+  }
+  
   ionViewDidLoad() {
     console.log('ionViewDidLoad SiteLabourEditBillingPage');
   }

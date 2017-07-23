@@ -114,13 +114,34 @@
 				#invoice="ngModel">		
 			</ion-input>			
 		</ion-item>
+		
+	    <ion-item color="light" *ngIf="order.approved && order.totalPrice > order.totalPayment">
+	        <ion-label>Ballance {{order.currency}}</ion-label>
+	        <ion-input 
+	        disabled=true
+	        [(ngModel)] = "order.ballance" 
+	        type="text"   
+	        #ballance="ngModel">   
+	        </ion-input>
+	    </ion-item>       
+	    <ion-item color="light" *ngIf="order.approved && order.totalPrice > order.totalPayment">
+	        <ion-label>Payment {{order.currency}}</ion-label>
+	        <ion-input 
+	        [(ngModel)] = "order.paidAmount" 
+	        type="text"
+	        (change)="setBallance(order)"   
+	        #paidAmount="ngModel">   
+	        </ion-input>
+	    </ion-item> 
+
 		<ion-item *ngIf="!order.approved">
 			<button *ngIf="canApprove && order.orderStatus != 'Complete'" disabled="true" color="light" ion-button> Approve </button> 
 			<button *ngIf="canApprove && order.orderStatus == 'Complete'" color="primary" ion-button (click)="approveOrder(order)"> Approve </button> 
 
 			<button *ngIf="order.orderStatus != 'Complete'" color="primary" ion-button (click)="completeOrder(order)"> Complete </button> 
-			<!--
-			<button *ngIf="order.orderStatus != 'Complete'" color="primary" ion-button> Save Changes </button>-->
-		</ion-item>		
+		</ion-item>
+	    <ion-item *ngIf="order.approved && order.totalPrice > order.totalPayment">
+	        <button item-end color="warining" ion-button (click)="payBill(order)"> Pay </button>
+	  	</ion-item>				
   </ion-item-group> 
 </ion-content>

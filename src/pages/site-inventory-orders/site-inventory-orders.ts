@@ -24,12 +24,48 @@ export class SiteInventoryOrdersPage {
   	item: '',
   	quantity: 0,
   	uom:'',
-  	orders:[]
+  	orders:[],
+    totalPrice: 0,
+    totalPayment: 0
   }
+
+  order = {
+    item: '',
+    uom: '',
+    quantity: 0,
+    orderId: '',
+    vendorName: '',
+    vendorContact: '',
+    vendorAddress: '',
+    currency: 'INR',
+    unitPrice: 0,
+    tax:0,
+    totalPrice: 0,
+    totalPayment: 0,
+    payments: [],
+    challan: '',
+    invoice: '',
+    orderStatus: 'Pending',
+    approved: false,
+    createDate: new Date(),
+    createdBy: '',
+     updatedBy: '',
+     updateDate: '',
+     approvedBy: '',
+     approvalDate: '',
+     paidAmount: 0,
+     ballance: 0 
+  }
+
   serverData: any;
   isLocked = false;
   canApprove = false;
 
+  getRandomInt(min, max) {
+    var _min = Math.ceil(min);
+    var _max = Math.floor(max);
+    return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+  }
 
   setTotalPrice(orderDetails){
       orderDetails.totalPrice = Number(orderDetails.quantity * orderDetails.unitPrice) + Number(orderDetails.tax);
@@ -76,9 +112,9 @@ export class SiteInventoryOrdersPage {
 	  	.map((o) => {
 	  		if(o.orderId == order.orderId){
 	  			o.approved = true;
-	  			o.approvedBy = this.userId
+	  			o.approvedBy = this.userId;
 	  			o.approvalDate = new Date();
-
+          o.totalPayment = 0;
 	  			this.selectedItem.quantity = Number(this.selectedItem.quantity) + Number(o.quantity);
 	  		}
 	  		newOrders[newOrders.length] = o;
@@ -128,6 +164,51 @@ export class SiteInventoryOrdersPage {
       this.selectedTaskData.inventory = newInventry;
 
 	  this.saveData();	
+  }
+
+  payBill(selectedOrder){
+    if(!this.isLocked){
+      this.isLocked = true;
+      var newInventory = [];
+      this.selectedTaskData.inventory
+          .map((elem) => {
+          for (var i in elem.orders) {
+              if(elem.orders[i].orderId == selectedOrder.orderId){
+                  if(elem.orders[i].totalPrice >= Number(selectedOrder.paidAmount) && 
+                    (Number(elem.orders[i].totalPrice) - Number(selectedOrder.ballance)) >= 0){
+                    elem.orders[i].payments.push({
+                        paymentId: this.getRandomInt(10000000000, 99999999999),
+                        payment: Number(selectedOrder.paidAmount),
+                        paidBy: this.userId,
+                        paymentDate: new Date()
+                    });
+                    elem.orders[i].totalPayment = Number(elem.orders[i].totalPayment) + Number(selectedOrder.paidAmount);
+                    elem.totalPayment = Number(elem.totalPayment) + Number(selectedOrder.paidAmount);
+                  } else {
+                    selectedOrder.paidAmount = 0;
+                    let invalidPaymentAlert = this.alertCtrl.create({
+                        title: 'Error',
+                        subTitle: 'Invalid Amount',
+                        buttons: ['ok']
+                    });
+                    invalidPaymentAlert.present();
+                    return;
+                  }
+              }
+          }
+          newInventory[newInventory.length] = elem;
+          return elem;
+      });
+      if(Number(selectedOrder.paidAmount) > 0 ){
+          this.selectedTaskData.inventory = newInventory;
+          selectedOrder.paidAmount = 0;
+          this.saveData();
+      } else this.isLocked = false;   
+    }
+  }
+
+  setBallance(selectedOrder){
+    selectedOrder.ballance = Number(selectedOrder.totalPrice) - Number(selectedOrder.totalPayment) - Number(selectedOrder.paidAmount);
   }
 
   ionViewDidLoad() {
