@@ -8,8 +8,8 @@ export class AuthService {
     isLoggedin: boolean;
     AuthToken;
     userData: any;
-    //serverUrl = 'http://localhost:3003';
-    serverUrl = 'https://smartcom-app-server.herokuapp.com';
+    serverUrl = 'http://localhost:3003';
+    
     serverDataSet: any;
 
     constructor(private http: Http) {
