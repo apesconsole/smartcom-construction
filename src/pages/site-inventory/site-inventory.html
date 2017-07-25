@@ -14,7 +14,7 @@
       Active Sites
     </ion-list-header>
     <ion-item-sliding *ngFor="let site of sites">
-      <ion-item color="light">
+      <ion-item>
         <h2>Project: {{site.projectId}}</h2>
         <p>Site: {{site.siteName}}</p>
         <p>{{site.address}}</p>
@@ -40,24 +40,26 @@
       <p>No Data Available</p>
     </ion-item>
     <ion-item-sliding *ngFor="let task of tasks">
-      <ion-item color="light">
-        <h2>{{task.taskDescription}}</h2>
-        <p>Total Cost: {{task.currency}} {{task.actualCost}}</p>
-        <p>Total Payment: {{task.totalPayment}}</p>
-        <p>Status: {{task.taskStatus}}</p>
+      <ion-item>
+        <ion-icon name="list-box" item-left large color="secondary"></ion-icon>   
+        <h2>{{task.taskDescription}} </h2>
+        <p>Actual Cost: {{task.currency}} {{task.actualCost}}</p>
+        <p>Estimated Cost: {{task.currency}} {{task.estimatedCost}}</p>
+        <p>Paid: {{task.currency}} {{task.totalPayment}}</p>  
+        <ion-note>{{task.taskStatus}}</ion-note>     
       </ion-item>
       <ion-item-options>
         <button ion-button color="apemoss" (click)="loadInventoryDetail(task)" icon-start>
           <ion-icon name="pricetag"></ion-icon>
-          Manage Inventory
+           Load Inventory
         </button>
         <button ion-button color="primary" (click)="loadLabourDetail(task)" icon-start>
           <ion-icon name="contact"></ion-icon>
-          Manage Labour
+           Load Labour
         </button> 
         <button ion-button color="secondary" (click)="loadTaskDetails(task)" icon-start>
           <ion-icon name="settings"></ion-icon>
-          Manage Task
+           Manage
         </button>       
       </ion-item-options>
     </ion-item-sliding>
@@ -75,7 +77,8 @@
         <p>No Data Available</p>
       </ion-item>      
       <ion-item-sliding *ngFor="let item of inventory">
-          <ion-item color="light">
+          <ion-item>
+            <ion-icon name="pricetag" item-left large color="secondary"></ion-icon> 
             <h2>{{item.item}}</h2>
             <p>Quantity: {{item.quantity}}</p>
             <p>Unit of Measure: {{item.uom}}</p>
@@ -106,7 +109,8 @@
         <p>No Data Available</p>
       </ion-item>
       <ion-item-sliding *ngFor="let item of labour">
-          <ion-item color="light">
+          <ion-item>
+            <ion-icon name="contact" item-left large color="secondary"></ion-icon>
             <h2>{{item.contractor}}</h2>
             <p>{{item.labourDescription}}</p>
             <p *ngIf="item.contractType == 'per_hour'">Hourly : {{item.currency}} {{item.rate}} </p>

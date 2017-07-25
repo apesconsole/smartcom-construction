@@ -10,7 +10,7 @@
 
 <ion-content>
   	<ion-item-group>
-      	<ion-item-divider color="primary">Inventory Items</ion-item-divider>
+      	<ion-item-divider color="primary">Valid Inventory Items</ion-item-divider>
       	<ion-item color="light" *ngFor="let config of configData.items">
       		<ion-input 
 				[(ngModel)] = "config.item" 
@@ -26,13 +26,18 @@
 				[(ngModel)] = "config.uom" 
 				type="text"   
 				#uom="ngModel">		
-			</ion-input>
-			<button *ngIf="!config.canDelete" item-end color="light" ion-button (click)="removeError()"> Remove </button>
-	        <button *ngIf="config.canDelete" item-end color="danger" ion-button (click)="removeconfig(config)"> Remove </button>
+			</ion-input>	  			
+			<button *ngIf="!config.canDelete" item-end color="light" ion-button (click)="removeError()">
+				<ion-icon name="trash"></ion-icon>
+			</button>
+	        <button *ngIf="config.canDelete" item-end color="danger" ion-button (click)="removeconfig(config)">
+	        	<ion-icon name="trash"></ion-icon>
+	        </button>
       	</ion-item>
  		<ion-item>
 			<button ion-button (click)="saveconfig()">Save Configuration</button>
 			<button ion-button (click)="addinventory()">Add New Item</button>
 		</ion-item>     
   	</ion-item-group>
+
 </ion-content>

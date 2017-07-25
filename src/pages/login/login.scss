@@ -19,4 +19,9 @@ page-login {
 		color: map-get($colors, dark);
 		font-size: 25px;
 	}
+
+	.p-danger {
+		margin-left: 15px;
+		color: map-get($colors, danger);
+	}
 }

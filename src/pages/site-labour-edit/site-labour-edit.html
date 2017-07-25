@@ -100,6 +100,12 @@
 	<ion-item>
 		<button 
 			color="primary" 
+			ion-button *ngIf="selectedLabour.active"
+			(click)="deActivateLabour()"> 
+			De-Activate 
+		</button>	
+		<button 
+			color="primary" 
 			ion-button *ngIf="!selectedLabour.approved"
 			(click)="editLabour()"> 
 			Update 
@@ -112,12 +118,12 @@
 		</button>
 		<button 
 			color="light" 
-			ion-button *ngIf="!canCreateBill">
+			ion-button *ngIf="!canCreateBill && selectedLabour.active">
 			Create Bill 
 		</button>			
 		<button 
 			color="primary" 
-			ion-button *ngIf="canCreateBill"
+			ion-button *ngIf="canCreateBill && selectedLabour.active"
 			(click)="addLabourBilling()">
 			Create Bill 
 		</button>			

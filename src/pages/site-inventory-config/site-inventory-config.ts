@@ -15,7 +15,7 @@ export class SiteInventoryConfigPage {
   message: string ;
   serverData: any;
   configData = {
-  	configId: '',
+  	configId: 'ITEM',
   	items: [],
   	updateDate:'',
   	updatedBy: ''
@@ -87,8 +87,9 @@ export class SiteInventoryConfigPage {
       this.configData.items.push({
         "item": "New Item",
         "dimension": "0",
-        "uom": "PC",
+        "uom": "Unit",
         "canDelete": true
       });
   }
+
 }

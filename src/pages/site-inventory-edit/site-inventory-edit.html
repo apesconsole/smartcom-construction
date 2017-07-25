@@ -1,9 +1,4 @@
-<!--
-  Generated template for the SiteInventoryEditPage page.
 
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
@@ -14,6 +9,62 @@
 
 
 <ion-content>
+  	<ion-item-group *ngIf="gblConfig.quantity > 0 && canCreateNewOrder">
+	  	<ion-item-divider color="primary">Global Inventory</ion-item-divider>
+	  	<ion-item color="light">
+	  		<ion-label>Item</ion-label>
+	  		<ion-input 
+	  			disabled="true"
+				[(ngModel)] = "gblConfig.item" 
+				type="text"   
+				#item="ngModel">		
+			</ion-input>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Available Quantity</ion-label>
+			<ion-input
+				disabled="true" 
+				[(ngModel)] = "gblConfig.quantity" 
+				type="text"   
+				#quantity="ngModel">
+			</ion-input>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>UOM</ion-label>			
+			<ion-input
+				disabled="true"
+				[(ngModel)] = "gblConfig.uom" 
+				type="text"   
+				#uom="ngModel">		
+			</ion-input>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Request Quantity</ion-label>
+			<ion-input
+				[(ngModel)] = "gblConfig.requestedQuantity" 
+				type="text"   
+				#uom="ngModel">		
+			</ion-input>			
+	  	</ion-item>
+		<ion-item>
+			<button *ngIf="!canRequest" color="light" ion-button > Request </button>  
+			<button *ngIf="canRequest" color="primary" ion-button (click)="requestGlobalItem()"> Request </button>  
+		</ion-item>
+  </ion-item-group>
+
+  <ion-item-group *ngIf="!canRequest && canCreateNewOrder">
+    <ion-item-divider color="primary">Pending Inventory Requests</ion-item-divider>
+      	<ion-item color="light">
+      		<ion-label>{{pendingRequest.item}}</ion-label>
+      		<ion-label>{{pendingRequest.uom}}</ion-label>
+      		<ion-label>{{pendingRequest.quantity}}</ion-label>			  			
+      	</ion-item>
+      	<ion-item *ngIf="canApprove">
+	        <button color="primary" ion-button (click)="approveRequestData()">
+	        	Process Request
+	        </button>
+      	</ion-item>
+  </ion-item-group>
   <ion-item-group>
     <ion-item-divider color="primary">Selected Site : {{selectedSite}}, Selected Task : {{selectedTask}}</ion-item-divider>
 	<ion-item color="light">

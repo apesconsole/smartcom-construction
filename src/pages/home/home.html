@@ -17,7 +17,8 @@
 
   <ion-card *ngFor="let site of sites">
 
-    <ion-item color="apemoss">
+    <ion-item color="light">
+      <ion-icon name="list" item-left large color="secondary"></ion-icon> 
       <h2><strong>Project: {{site.projectId}}</strong></h2>
       <p>Site: {{site.siteName}}</p>
       <p>{{site.address}}</p>
@@ -30,15 +31,21 @@
         <p>Held      : {{site.taskMatrix.totalHeldTasks}}</p>
         <p>Running   : {{site.taskMatrix.totalRunningTasks}}</p>
       </ion-item>
-      <ion-item>
+      <ion-item *ngIf="site.canViewFinance">
         <h1>Task Financials</h1>
         <p>Actual Cost : {{site.taskMatrix.currency}} {{site.taskMatrix.totalCost}}</p>
         <p>Estimated Cost   : {{site.taskMatrix.currency}} {{site.taskMatrix.totalEstimatedCost}}</p>
-        <p>Total Payments   : {{site.taskMatrix.currency}} {{site.taskMatrix.totalPayment}}</p>
-        <hr/>
         <p *ngIf="site.taskMatrix.deviation > 0">Deviation      : {{site.taskMatrix.currency}} {{site.taskMatrix.deviation}}</p>
-        <p *ngIf="site.taskMatrix.savings > 0">Remaining Budget   : {{site.taskMatrix.currency}} {{site.taskMatrix.savings}}</p>
-      </ion-item>      
+        <p *ngIf="site.taskMatrix.savings > 0">Remaining Budget   : {{site.taskMatrix.currency}} {{site.taskMatrix.savings}}</p>        
+        <p>Total Payments  : {{site.taskMatrix.currency}} {{site.taskMatrix.totalPayment}}</p>
+        <hr/>
+      </ion-item> 
+      <ion-item *ngIf="site.canViewFinance">
+          <button ion-button icon-left clear item-end>
+            <ion-icon name="share"></ion-icon>
+            Share Report
+          </button>
+      </ion-item>               
     </ion-card-content>     
   </ion-card>
 </ion-content>

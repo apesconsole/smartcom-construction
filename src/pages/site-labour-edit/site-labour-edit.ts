@@ -143,6 +143,26 @@ export class SiteLabourEditPage {
     }
   }
 
+  deActivateLabour(){
+    if(!this.isLocked){
+      this.isLocked = true;
+      var newLabour = [];
+      this.selectedTaskData.labour
+        .map((elem) => {
+          if(elem.labourId == this.selectedLabour.labourId){
+              elem.active = false;
+              elem.updatedBy = this.userId;
+              elem.updateDate = new Date();
+              console.log('Changed -> ' + elem.labourId);
+          }
+          newLabour[newLabour.length] = elem;
+          return elem;
+      });
+      this.selectedTaskData.labour = newLabour;
+      this.saveData();
+    }
+  }
+
   approveLabour(){
     if(!this.isLocked){
       this.isLocked = true;

@@ -115,19 +115,20 @@ export class SiteInventoryOrdersPage {
 	  			o.approvedBy = this.userId;
 	  			o.approvalDate = new Date();
           o.totalPayment = 0;
+          this.selectedItem.totalPrice = Number(this.selectedItem.totalPrice) + Number(o.totalPrice);
 	  			this.selectedItem.quantity = Number(this.selectedItem.quantity) + Number(o.quantity);
 	  		}
 	  		newOrders[newOrders.length] = o;
 	  		return o;
 	  	});
-	  this.selectedItem.orders = newOrders;
-
+	    this.selectedItem.orders = newOrders;
       var newInventry = [];
       this.selectedTaskData.inventory
       	.map((elem) => {
       	  if(elem.item == this.selectedItem.item){
       	  		elem.orders = this.selectedItem.orders;
       	  		elem.quantity = this.selectedItem.quantity;
+              elem.totalPrice = Number(this.selectedItem.totalPrice);
       	  }
       	  newInventry[newInventry.length] = elem;
 		  return elem;

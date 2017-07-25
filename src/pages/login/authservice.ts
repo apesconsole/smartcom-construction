@@ -9,7 +9,7 @@ export class AuthService {
     AuthToken;
     userData: any;
     //serverUrl = 'http://localhost:3003';
-    
+    serverUrl = 'https://smartcom-app-server.herokuapp.com';
     serverDataSet: any;
 
     constructor(private http: Http) {
@@ -128,8 +128,8 @@ export class AuthService {
         });         
     }
 
-    edittask(siteData){
-       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&token=Bearer ' + this.AuthToken;
+    edittask(siteData, taskDetails){
+       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskDetails=' + JSON.stringify(taskDetails) + '&token=Bearer ' + this.AuthToken;
         
         var headers = new Headers();
         headers.append("Accept", 'application/json');
@@ -151,6 +151,67 @@ export class AuthService {
     }
     
     //Set Up Inventory
+    getglobalinventoryconfig(){
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.get(this.serverUrl + '/api/loadglobaliteminventoryconfig?userId=' + this.userData.userId + '&token=Bearer ' + this.AuthToken)
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        });
+    }
+
+    saveglobalinventoryrequest(configData){
+        var postData = 'userId=' + this.userData.userId + '&configData=' + JSON.stringify(configData) +  '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/saveglobalinventoryrequests', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        }); 
+    }
+
+
+    approveglobalinventoryrequest(siteData, requestId, selectedItem){
+        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&requestId=' + requestId + '&selectedItem=' + selectedItem + '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/approveglobalinventoryrequest', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        }); 
+    }    
+    
     getinventoryconfig() {
         return new Promise((resolve, reject ) => {
             this.loadUserCredentials();

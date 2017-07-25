@@ -23,7 +23,9 @@ export class SiteInventoryCreateOrderPage {
   	item: '',
   	quantity: 0,
   	uom:'',
-  	orders:[]
+    release: false,
+  	orders:[],
+    consumption: []
   }
 
   orderDetails = {

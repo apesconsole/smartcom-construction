@@ -30,7 +30,7 @@ export class HomePage {
       this.authservice.constructionsitematrix().then(
         data => {
             this.siteData = data;
-            this.sites = this.siteData.data;
+            this.sites = this.siteData.data;          
         }, error => {
             this.navCtrl.setRoot(LoginPage);
             this.message = error.message;

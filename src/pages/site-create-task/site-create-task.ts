@@ -20,18 +20,21 @@ export class SiteCreateTaskPage {
   }
 
   taskDetails = {
-	taskId: '',
-	taskDescription: '', 
-  currency: 'INR',
-  estimatedCost: 0,
-  actualCost: 0,
-	estimatedDays: '', 
-	daysRemaining: '', 
-	taskStatus: 'Waiting',
-	createDate: new Date(),
-	createdBy: '',
-	updateDate: Date,
-	updatedBy: '' 	
+  	taskId: '',
+  	taskDescription: '', 
+    currency: 'INR',
+    estimatedCost: 0,
+    actualCost: 0,
+    totalPayment: 0,
+    totalLabour: 0,
+    totalInventory: 0,
+  	estimatedDays: 0, 
+  	daysRemaining: 0, 
+  	taskStatus: 'Waiting',
+  	createDate: new Date(),
+  	createdBy: '',
+  	updateDate: Date,
+  	updatedBy: '' 	
   }
 
   taskInventory = {

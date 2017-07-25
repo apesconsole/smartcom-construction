@@ -49,7 +49,7 @@ export class SiteEditTaskPage {
   }
 
   saveData(){
-      this.authservice.edittask(this.selectedSiteData).then(
+      this.authservice.edittask(this.selectedSiteData, this.taskDetails).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
