@@ -54,12 +54,22 @@ export class SiteInventoryOrdersPage {
      approvedBy: '',
      approvalDate: '',
      paidAmount: 0,
-     ballance: 0 
+     ballance: 0,
+     estimatedDeliveryDays: 0
+  }
+
+
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
   }
 
   serverData: any;
   isLocked = false;
   canApprove = false;
+  
+  permission = [];
 
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
@@ -77,11 +87,24 @@ export class SiteInventoryOrdersPage {
 	  this.selectedSite = this.selectedTaskData.siteId;
     this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
+    this.permission = this.navParams.get('permission');
 	  this.canApprove = this.navParams.get('canApprove');
   }
 
+  canPay(){
+    let pay = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            pay =  elem.pay;
+            return;
+        }
+        return elem;
+    });
+    return pay;
+  }
+
   saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -104,6 +127,28 @@ export class SiteInventoryOrdersPage {
            this.navCtrl.setRoot(LoginPage);
            this.message = error.message;
       }); 
+  }
+
+  deleteOrder(order){
+      var newOrders = [];
+    this.selectedItem.orders
+      .map((o) => {
+        if(o.orderId != order.orderId){
+          newOrders[newOrders.length] = o;
+        }
+        return o;
+      });
+      this.selectedItem.orders = newOrders;
+      var newInventry = [];
+      this.selectedTaskData.inventory
+        .map((elem) => {
+          if(elem.item == this.selectedItem.item){
+              elem.orders = this.selectedItem.orders;
+          }
+          newInventry[newInventry.length] = elem;
+      return elem;
+    });
+    this.saveData();  
   }
 
   approveOrder(order){
@@ -133,8 +178,10 @@ export class SiteInventoryOrdersPage {
       	  newInventry[newInventry.length] = elem;
 		  return elem;
 	  });
-      this.selectedTaskData.inventory = newInventry;
-
+    this.selectedTaskData.inventory = newInventry;
+    this.notificationData.key = 'task_inventory_approval_info';
+    this.notificationData.subject = 'Order Approved Notification';
+    this.notificationData.message = 'Order Approved \r\n Order Approved By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Order Id:' + order.orderId + '\r\n Ordered Item:' + order.item + '\r\n Total Items:' + order.quantity + '\r\n Total Price:' + order.currency + ' ' + order.totalPrice;
 	  this.saveData();	
 
   }
@@ -163,7 +210,9 @@ export class SiteInventoryOrdersPage {
 		  return elem;
 	  });
       this.selectedTaskData.inventory = newInventry;
-
+    this.notificationData.key = 'task_inventory_approval_request';
+    this.notificationData.subject = 'Order Approval Request';
+    this.notificationData.message = 'Order Approval Request \r\n Order Created By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Order Id:' + order.orderId + '\r\n Ordered Item:' + order.item + '\r\n Total Items:' + order.quantity + '\r\n Total Price:' + order.currency + ' ' + order.totalPrice;
 	  this.saveData();	
   }
 
@@ -203,6 +252,11 @@ export class SiteInventoryOrdersPage {
       if(Number(selectedOrder.paidAmount) > 0 ){
           this.selectedTaskData.inventory = newInventory;
           selectedOrder.paidAmount = 0;
+
+          this.notificationData.key = 'task_inventory_order_payment_info';
+          this.notificationData.subject = 'Order Bill Payment Notification';
+          this.notificationData.message = 'Order Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Order Id:' + selectedOrder.orderId + '\r\n Ordered Item:' + selectedOrder.item + '\r\n Total Price:' + selectedOrder.currency + ' ' + selectedOrder.totalPrice + '\n\r Paid Amount:' + selectedOrder.currency + ' ' + selectedOrder.paidAmount + '\r\n Remaining Amount:' + selectedOrder.currency + ' ' + selectedOrder.ballance;
+
           this.saveData();
       } else this.isLocked = false;   
     }

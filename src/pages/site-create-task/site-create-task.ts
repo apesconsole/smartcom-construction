@@ -49,6 +49,12 @@ export class SiteCreateTaskPage {
     labour: []
   }
 
+  notificationData = {
+    key: 'task_add_info',
+    subject: '',
+    message: ''
+  }
+
   serverData: any;
   isLocked = false;
 
@@ -74,7 +80,7 @@ export class SiteCreateTaskPage {
   }
 
   saveData(){
-      this.authservice.createtask(this.selectedSiteData, this.taskInventory, this.taskLabour).then(
+      this.authservice.createtask(this.selectedSiteData, this.taskInventory, this.taskLabour, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -100,11 +106,18 @@ export class SiteCreateTaskPage {
       }); 
   }
 
+  messageBuilder(){
+    this.notificationData.subject = 'New Task Added at Site:' + this.selectedSite;
+    this.notificationData.message = 'New Task Added \r\n Site Id:' + this.selectedSite +'\r\n Task Id:' + this.taskDetails.taskId + '\r\n Task Description:' + this.taskDetails.taskDescription + '\r\n Created By:' + this.userId;
+  }
+
   createTask(){
     if(!this.isLocked){
         this.isLocked = true;
         this.taskDetails.daysRemaining = this.taskDetails.estimatedDays;
         this.selectedSiteData.taskList.push(this.taskDetails);
+        //Notification Details
+        this.messageBuilder();
   	    this.saveData();	
     }   
   }

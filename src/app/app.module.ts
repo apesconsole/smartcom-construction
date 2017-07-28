@@ -12,6 +12,8 @@ import { SmartCom }  from './app.component';
 import { LoginPage } from '../pages/login/login';
 import { HomePage }  from '../pages/home/home';
 import { SiteInventoryConfigPage } from '../pages/site-inventory-config/site-inventory-config';
+import { SiteInventoryTransferPage } from '../pages/site-inventory-transfer/site-inventory-transfer';
+
 import { SiteInventoryPage } from '../pages/site-inventory/site-inventory';
 import { SiteCreateTaskPage } from '../pages/site-create-task/site-create-task';
 import { SiteEditTaskPage } from '../pages/site-edit-task/site-edit-task';
@@ -32,6 +34,7 @@ import { SiteInventoryConsumeItemPage } from '../pages/site-inventory-consume-it
     LoginPage,
     HomePage,
     SiteInventoryConfigPage,
+    SiteInventoryTransferPage,
     SiteInventoryPage,
     SiteCreateTaskPage,
     SiteEditTaskPage,
@@ -57,6 +60,7 @@ import { SiteInventoryConsumeItemPage } from '../pages/site-inventory-consume-it
     LoginPage,
     HomePage,
     SiteInventoryConfigPage,
+    SiteInventoryTransferPage,
     SiteInventoryPage,
     SiteCreateTaskPage,
     SiteEditTaskPage,

@@ -127,9 +127,17 @@
 			type="text"   
 			#invoice="ngModel">		
 		  </ion-input>
-	</ion-item>		
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Estimated Delivery (Days)</ion-label>
+		  <ion-input
+			[(ngModel)] = "orderDetails.estimatedDeliveryDays" 
+			type="text"   
+			#estimatedDeliveryDays="ngModel">		
+		  </ion-input>
+	</ion-item>				
 	<ion-item>
-		<button color="danger" ion-button (click)="createOrder()"> Submit Order </button>  
+		<button color="secondary" ion-button (click)="createOrder()"> Submit Order </button>  
 	</ion-item>
   </ion-item-group>
 </ion-content>

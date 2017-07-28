@@ -104,13 +104,13 @@
         #paidAmount="ngModel">   
         </ion-input>
     </ion-item> 		
-  	<ion-item *ngIf="!bill.approved">
+  	<ion-item *ngIf="!bill.approved && canApproveBill()">
         	<button color="primary" ion-button (click)="updateBilling(bill)"> Update </button>  	
-        	<button color="secondary" ion-button (click)="approveBilling(bill)"> Approve </button>
-        	<button color="danger" ion-button (click)="removeBilling(bill)"> Delete </button>
+        	<button color="primary" ion-button (click)="approveBilling(bill)"> Approve </button>
+        	<button color="primary" ion-button (click)="removeBilling(bill)"> Delete </button>
   	</ion-item> 
-    <ion-item *ngIf="bill.approved && bill.billingAmount > bill.totalPayment">
-        <button item-end color="warining" ion-button (click)="payBill(bill)"> Pay </button>
+    <ion-item *ngIf="bill.approved && bill.billingAmount > bill.totalPayment && canPayBill()">
+        <button item-end color="primary" ion-button (click)="payBill(bill)"> Pay </button>
   	</ion-item>
     <ion-item *ngIf="bill.approved && bill.billingAmount == bill.totalPayment">
       Paid in Full

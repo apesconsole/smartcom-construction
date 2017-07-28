@@ -1,15 +1,17 @@
 <ion-content padding>
+  <span><h3 class="logo"><i><strong></strong></i></h3></span>
   <ion-list>
-      <h1 class="logo"><i>smart<strong>Com</strong></i></h1>
       <ion-item>
-          <ion-label>Username</ion-label>
+          <ion-label>User Id</ion-label>
           <ion-input [(ngModel)] = "usercreds.userId" type="text"></ion-input>
       </ion-item>
       <ion-item>
           <ion-label>Password</ion-label>
           <ion-input [(ngModel)] = "usercreds.password" type="password"></ion-input>
       </ion-item>
-      <button ion-button large (click)="login(usercreds)" class="aligner" >Login</button>
+      <ion-item>
+      <button ion-button block large (click)="login(usercreds)">Login</button>
+      </ion-item>
   </ion-list>
   <!--<button ion-button (click)="signup()">Signup</button>-->
 </ion-content>

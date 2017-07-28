@@ -3,6 +3,8 @@ import { IonicPage, NavController, MenuController, NavParams, AlertController } 
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
+import { SiteInventoryTransferPage } from '../site-inventory-transfer/site-inventory-transfer';
+
 
 @IonicPage()
 @Component({
@@ -20,6 +22,13 @@ export class SiteInventoryConfigPage {
   	updateDate:'',
   	updatedBy: ''
   };
+  
+  serverGlobalData: any;
+  globalConfigData = {
+      items: [],
+      requests: []
+  }
+  isLocked = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private menu: MenuController, public authservice: AuthService, public alertCtrl: AlertController) {
     	this.userData = authservice.getDisplayinfo();
@@ -29,6 +38,7 @@ export class SiteInventoryConfigPage {
     	console.log('ionViewDidLoad SiteInventoryConfigPage');
     	this.menu.swipeEnable(true, 'menu');
     	this.loadInventoryConfig();
+      this.loadGlobalInventoryConfig();
   }
 
   loadInventoryConfig(){
@@ -90,6 +100,87 @@ export class SiteInventoryConfigPage {
         "uom": "Unit",
         "canDelete": true
       });
+  }
+
+  loadGlobalInventoryConfig(){
+      this.authservice.getglobalinventoryconfig().then(
+      data => {
+          this.serverGlobalData = data;
+          this.globalConfigData = this.serverGlobalData.data;
+      }, error => {
+         this.navCtrl.setRoot(LoginPage);
+         this.message = error.message;
+      });
+  }
+
+  itemRequests = [];
+
+  requestData = {
+      requestId: '',
+      siteId: '',
+      taskId: '',        
+      item: '',
+      uom:  '',
+      quantity: 0,
+      transfer: false,
+      transferOrder: {
+          transferOrderId: '',
+          shippingVendor:'',
+          shippingId:'',
+          shippingCost: 0,
+          shippingType: '',
+          trackingId: '',
+          currency: 'INR',
+          payment: 0
+      },
+      requestedBy: '',
+      requestDate: '',
+      rejected: false,
+      rejectedBy: '',
+      rejectionDate: '',
+      approved: false,
+      approvedBy: '',
+      approvalDate: ''
+  }
+
+  rejectRequestData(selectedRequest){
+      this.authservice.rejectglobalinventoryrequests(this.globalConfigData, selectedRequest).then(
+        data => {
+            this.serverData = data;
+            if(this.serverData.operation) {
+                let requestAlert = this.alertCtrl.create({
+                    title: 'Success',
+                    subTitle: 'Request Rejected',
+                    buttons: ['ok']
+                });
+                requestAlert.present();
+            } else {
+                var requestAlertFailureAlert = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Request Not Rejected',
+                    buttons: ['ok']
+                });
+                requestAlertFailureAlert.present();
+            }
+            this.loadGlobalInventoryConfig();
+        }, error => {
+           this.navCtrl.setRoot(LoginPage);
+           this.message = error.message;
+      }); 
+  }
+
+  rejectRequests(selectedRequest){
+    if(!this.isLocked){
+      this.isLocked = true;
+      selectedRequest.rejected = true;
+      this.rejectRequestData(selectedRequest);
+    }   
+  }
+
+  addTransferRequest(){
+    this.navCtrl.push(SiteInventoryTransferPage, {
+        userId: this.userData.userId       
+    });
   }
 
 }

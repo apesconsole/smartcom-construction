@@ -9,47 +9,76 @@
 
 
 <ion-content>
-  	<ion-item-group *ngIf="gblConfig.quantity > 0 && canCreateNewOrder">
-	  	<ion-item-divider color="primary">Global Inventory</ion-item-divider>
-	  	<ion-item color="light">
-	  		<ion-label>Item</ion-label>
-	  		<ion-input 
-	  			disabled="true"
-				[(ngModel)] = "gblConfig.item" 
-				type="text"   
-				#item="ngModel">		
-			</ion-input>
-		</ion-item>
-		<ion-item color="light">
-			<ion-label>Available Quantity</ion-label>
-			<ion-input
-				disabled="true" 
-				[(ngModel)] = "gblConfig.quantity" 
-				type="text"   
-				#quantity="ngModel">
-			</ion-input>
-		</ion-item>
-		<ion-item color="light">
-			<ion-label>UOM</ion-label>			
-			<ion-input
-				disabled="true"
-				[(ngModel)] = "gblConfig.uom" 
-				type="text"   
-				#uom="ngModel">		
-			</ion-input>
-		</ion-item>
-		<ion-item color="light">
-			<ion-label>Request Quantity</ion-label>
-			<ion-input
-				[(ngModel)] = "gblConfig.requestedQuantity" 
-				type="text"   
-				#uom="ngModel">		
-			</ion-input>			
-	  	</ion-item>
-		<ion-item>
-			<button *ngIf="!canRequest" color="light" ion-button > Request </button>  
-			<button *ngIf="canRequest" color="primary" ion-button (click)="requestGlobalItem()"> Request </button>  
-		</ion-item>
+
+  <ion-item-group *ngIf="availableGblConfig.length > 0">
+      <ion-item-divider color="primary">Available Global Inventory</ion-item-divider>
+      <ion-row color="light" *ngFor="let item of availableGblConfig">
+          <ion-col center text-center>
+          	<ion-note>{{item.item}}</ion-note>
+          </ion-col>
+          <ion-col center text-center>
+            <ion-note>{{item.quantity}} {{item.uom}}</ion-note>
+          </ion-col>
+          <ion-col center text-center>
+            <ion-note>At Site: {{item.currentLocation}}</ion-note>
+          </ion-col> 
+          <ion-col>         
+          	<button item-end color="secondary" ion-button icon-left clear small (click)="selectGlobalItem(item)"> Select </button>
+          </ion-col>
+      </ion-row> 
+  </ion-item-group>
+
+  <ion-item-group *ngIf="gblConfig.item != ''">
+    <ion-item-divider color="primary">Global Item Request</ion-item-divider>
+	<ion-item color="light">
+		  <ion-label>Item</ion-label>
+		  <ion-input
+		  	disabled="true" 
+			[(ngModel)] = "gblConfig.item" 
+			type="text"   
+			#item="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Current Location</ion-label>
+		  <ion-input
+		  	disabled="true" 
+			[(ngModel)] = "gblConfig.currentLocation" 
+			type="text"   
+			#currentLocation="ngModel">		
+		  </ion-input>
+	</ion-item>	
+	<ion-item color="light">
+		  <ion-label>Available Quantity</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "gblConfig.quantity" 
+			type="text"   
+			#quantity="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>UOM</ion-label>
+		  <ion-input 
+		    disabled="true"
+			[(ngModel)] = "gblConfig.uom" 
+			type="text"   
+			#uom="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item color="light">
+		  <ion-label>Requested Quantity</ion-label>
+		  <ion-input 
+			[(ngModel)] = "gblConfig.requestedQuantity" 
+			type="text"   
+			#requestedQuantity="ngModel">		
+		  </ion-input>
+	</ion-item>
+	<ion-item>
+		<button color="primary" ion-button (click)="requestGlobalItem()">
+			Request
+		</button>
+	</ion-item>
   </ion-item-group>
 
   <ion-item-group *ngIf="!canRequest && canCreateNewOrder">
@@ -96,8 +125,8 @@
 	</ion-item>
 	<ion-item>
 		<button color="light" ion-button *ngIf="!canCreateNewOrder"> Create Order </button> 
-		<button color="primary" ion-button *ngIf="canCreateNewOrder"(click)="createOrder()"> Create Order </button> 
-		<button color="primary" ion-button (click)="manageOrders()"> Manage Orders </button>  
+		<button color="primary" ion-button *ngIf="canCreateNewOrder && canCreateOrder()"(click)="createOrder()"> Create Order </button> 
+		<button color="primary" ion-button *ngIf="viewFinance() && canCreateOrder()" (click)="manageOrders()"> Manage Orders </button>  
 	</ion-item>
   </ion-item-group>
 </ion-content>

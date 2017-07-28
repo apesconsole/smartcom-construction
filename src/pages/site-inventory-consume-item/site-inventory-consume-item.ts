@@ -36,6 +36,12 @@ export class SiteInventoryConsumeItemPage {
     consumedDate: new Date()
   }
 
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
       this.userId = this.navParams.get('userId');
 	    this.selectedTaskData = this.navParams.get('selectedTaskData');
@@ -73,7 +79,7 @@ export class SiteInventoryConsumeItemPage {
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

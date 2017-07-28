@@ -32,6 +32,13 @@ export class SiteInventoryAddPage {
   	quantity: 0,
   	uom:''
   }
+
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
   isLocked = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
@@ -67,6 +74,7 @@ export class SiteInventoryAddPage {
         "item": this.selectedItem.item,
         "quantity": this.selectedItem.quantity,
         "orders":[],
+        "requests":[],
         "consumption":[],
         "uom": this.selectedItem.uom,
         "totalPrice": 0,
@@ -75,7 +83,7 @@ export class SiteInventoryAddPage {
         "createdBy": this.userId
       });
 
-      this.authservice.savesiteinventory(this.selectedTaskData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

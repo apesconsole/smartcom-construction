@@ -45,6 +45,7 @@ export class SiteLabourEditBillingPage {
       billingId: '',
       billingAmount: 0,
       invoice: '',
+      currency: 'INR',
       totalPayment: 0,
       payments: [],
       createDate: new Date(),
@@ -61,6 +62,14 @@ export class SiteLabourEditBillingPage {
   serverData: any;
   isLocked = false;
 
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
+  permission = [];
+
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
     var _max = Math.floor(max);
@@ -72,13 +81,14 @@ export class SiteLabourEditBillingPage {
       //Task Data Contains the Specific Task Labour
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');
 	  this.selectedSite = this.selectedTaskData.siteId;
-      this.selectedTask = this.selectedTaskData.taskId;
+    this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedLabour = this.navParams.get('selectedLabour');
+    this.permission = this.navParams.get('permission');
     this.bill.paidAmount = 0;
   }
 
   saveData(){
-      this.authservice.savesitelabour(this.selectedTaskData).then(
+      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -124,6 +134,30 @@ export class SiteLabourEditBillingPage {
   	}
   }
 
+  canApproveBill(){
+    let canApprove = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            canApprove = elem.approve;
+            return;
+        }
+        return elem;
+    });
+    return canApprove;
+  }
+
+  canPayBill(){
+    let canPay = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            canPay = elem.pay;
+            return;
+        }
+        return elem;
+    });
+    return canPay;
+  }
+
   approveBilling(selectedBill){
   	if(!this.isLocked){
   		this.isLocked = true;
@@ -145,6 +179,11 @@ export class SiteLabourEditBillingPage {
 	          return elem;
 	    });
 	    this.selectedTaskData.labour = newLabour;
+
+      this.notificationData.key = 'task_labour_bill_approval_info';
+      this.notificationData.subject = 'Labour Bill Approved';
+      this.notificationData.message = 'Labour Bill Approved  \r\n Bill Approved By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour: ' + this.selectedLabour.labourDescription  + '\r\n Billing Id:' + selectedBill.billingId + '\r\n Total Bill:' + selectedBill.currency + ' ' + selectedBill.billingAmount;
+
 	    this.saveData();
   	}
   }
@@ -212,6 +251,11 @@ export class SiteLabourEditBillingPage {
       if(Number(selectedBill.paidAmount) > 0 ){
           this.selectedTaskData.labour = newLabour;
           selectedBill.paidAmount = 0;
+
+          this.notificationData.key = 'task_labour_bill_payment_info';
+          this.notificationData.subject = 'Labour Bill Payment Notification';
+          this.notificationData.message = 'Labour Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour: ' + this.selectedLabour.labourDescription  + '\r\n Billing Id:' + selectedBill.billingId + '\r\n Total Bill:' + selectedBill.currency + ' ' + selectedBill.billingAmount + '\n\r Paid Amount:' + selectedBill.currency + ' ' + selectedBill.paidAmount + '\r\n Remaining Amount:' + selectedBill.currency + ' ' + selectedBill.ballance;
+
           this.saveData();
       } else this.isLocked = false;   
     }

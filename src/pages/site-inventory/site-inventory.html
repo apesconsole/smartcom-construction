@@ -43,9 +43,9 @@
       <ion-item>
         <ion-icon name="list-box" item-left large color="secondary"></ion-icon>   
         <h2>{{task.taskDescription}} </h2>
-        <p>Actual Cost: {{task.currency}} {{task.actualCost}}</p>
-        <p>Estimated Cost: {{task.currency}} {{task.estimatedCost}}</p>
-        <p>Paid: {{task.currency}} {{task.totalPayment}}</p>  
+        <p *ngIf="viewFinance(selectedSite)">Actual Cost: {{task.currency}} {{task.actualCost}}</p>
+        <p *ngIf="viewFinance(selectedSite)">Estimated Cost: {{task.currency}} {{task.estimatedCost}}</p>
+        <p *ngIf="viewFinance(selectedSite)">Paid: {{task.currency}} {{task.totalPayment}}</p>  
         <ion-note>{{task.taskStatus}}</ion-note>     
       </ion-item>
       <ion-item-options>
@@ -82,11 +82,11 @@
             <h2>{{item.item}}</h2>
             <p>Quantity: {{item.quantity}}</p>
             <p>Unit of Measure: {{item.uom}}</p>
-            <p>Total Price: {{item.totalPrice}}</p>
-            <p>Total Payment: {{item.totalPayment}}</p>            
+            <p *ngIf="viewFinance(selectedSite)">Total Price: {{item.totalPrice}}</p>
+            <p *ngIf="viewFinance(selectedSite)">Total Payment: {{item.totalPayment}}</p>            
           </ion-item>
           <ion-item-options>
-              <button ion-button color="primary" (click)="editinventory(item)" icon-start>
+              <button ion-button color="secondary" (click)="editinventory(item)" icon-start>
                 <ion-icon name="pricetag"></ion-icon>
                 Manage Item
               </button>      
@@ -119,11 +119,11 @@
             <p *ngIf="item.contractType == 'per_month'">Monthly : {{item.currency}} {{item.rate}} </p>
             <p *ngIf="item.contractType == 'full_payout'">Full Payout : {{item.currency}} {{item.rate}} </p>
             <p *ngIf="item.contractType == 'partial_payout'">Partial Payout : {{item.currency}} {{item.rate}} </p>
-            <p>Total Bill: {{item.totalBill}}</p>
-            <p>Total Payment: {{item.totalPayment}}</p>
+            <p *ngIf="viewFinance(selectedSite)">Total Bill: {{item.totalBill}}</p>
+            <p *ngIf="viewFinance(selectedSite)">Total Payment: {{item.totalPayment}}</p>
           </ion-item>
           <ion-item-options>
-              <button ion-button color="primary" (click)="editlabour(item)" icon-start>
+              <button ion-button color="secondary" (click)="editlabour(item)" icon-start>
                 <ion-icon name="contact"></ion-icon>
                 Manage Labour
               </button>             

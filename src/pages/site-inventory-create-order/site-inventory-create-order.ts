@@ -51,7 +51,14 @@ export class SiteInventoryCreateOrderPage {
 	   updatedBy: '',
 	   updateDate: '',
 	   approvedBy: '',
-	   approvalDate: ''	 	
+	   approvalDate: '',
+     estimatedDeliveryDays: 0	 	
+  }
+
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
   }
 
   serverData: any;
@@ -84,7 +91,7 @@ export class SiteInventoryCreateOrderPage {
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

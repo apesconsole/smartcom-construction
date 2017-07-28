@@ -42,7 +42,7 @@
 			#taskDescription="ngModel">		
 		  </ion-input>
 	</ion-item>
-	<ion-item color="light">
+	<ion-item color="light" *ngIf="viewFinance(selectedSite)">
 		  <ion-label>Currency</ion-label>
 		  <ion-input 
 		  	disabled="true"
@@ -51,7 +51,7 @@
 			#currency="ngModel">		
 		  </ion-input>
 	</ion-item>		
-	<ion-item color="light">
+	<ion-item color="light" *ngIf="viewFinance(selectedSite)">
 		  <ion-label>Estimated Cost</ion-label>
 		  <ion-input 
 			[(ngModel)] = "taskDetails.estimatedCost" 
@@ -67,7 +67,7 @@
 			#estimatedDays="ngModel">		
 		  </ion-input>
 	</ion-item>	
-	<ion-item color="light">
+	<ion-item color="light" *ngIf="viewFinance(selectedSite)">
 		  <ion-label>Actual Cost</ion-label>
 		  <ion-input 
 		  	disabled="true"

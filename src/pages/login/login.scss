@@ -3,7 +3,7 @@ page-login {
 		margin-left: 15px;
 		padding-top: 50px;
 		color: map-get($colors, primary);
-		font-size: 45px;
+		font-size: 35px;
 	}
 
 	.aligner {
@@ -21,7 +21,7 @@ page-login {
 	}
 
 	.p-danger {
-		margin-left: 15px;
+		margin: 15px;
 		color: map-get($colors, danger);
 	}
 }

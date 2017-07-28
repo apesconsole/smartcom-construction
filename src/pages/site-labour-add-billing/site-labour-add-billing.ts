@@ -43,6 +43,7 @@ export class SiteLabourAddBillingPage {
   	  billingId: '',
   	  billingAmount: 0,
   	  invoice: '',
+      currency: 'INR',
       totalPayment: 0,
       payments: [],
   	  createDate: new Date(),
@@ -55,6 +56,12 @@ export class SiteLabourAddBillingPage {
   }
   serverData: any;
   isLocked = false;
+
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
 
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
@@ -74,7 +81,7 @@ export class SiteLabourAddBillingPage {
   }
 
   saveData(){
-      this.authservice.savesitelabour(this.selectedTaskData).then(
+      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

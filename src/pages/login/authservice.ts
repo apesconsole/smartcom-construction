@@ -8,8 +8,8 @@ export class AuthService {
     isLoggedin: boolean;
     AuthToken;
     userData: any;
-    //serverUrl = 'http://localhost:3003';
-
+    serverUrl = 'http://localhost:3003';
+    
     serverDataSet: any;
 
     constructor(private http: Http) {
@@ -106,8 +106,9 @@ export class AuthService {
     }
 
     //Set Up Task
-    createtask(siteData, taskInventory, taskLabour){
-       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskInventory=' + JSON.stringify(taskInventory) + '&taskLabour=' + JSON.stringify(taskLabour) + '&token=Bearer ' + this.AuthToken;
+    createtask(siteData, taskInventory, taskLabour, notificationData){
+        console.log(notificationData)
+       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskInventory=' + JSON.stringify(taskInventory) + '&taskLabour=' + JSON.stringify(taskLabour) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
         var headers = new Headers();
         headers.append("Accept", 'application/json');
@@ -128,8 +129,8 @@ export class AuthService {
         });         
     }
 
-    edittask(siteData, taskDetails){
-       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskDetails=' + JSON.stringify(taskDetails) + '&token=Bearer ' + this.AuthToken;
+    edittask(siteData, taskDetails, notificationData){
+       var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&taskDetails=' + JSON.stringify(taskDetails) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
         var headers = new Headers();
         headers.append("Accept", 'application/json');
@@ -189,6 +190,27 @@ export class AuthService {
         }); 
     }
 
+    rejectglobalinventoryrequests(globalData, rejectedRequest){
+        var postData = 'userId=' + this.userData.userId + '&globalData=' + JSON.stringify(globalData) + '&rejectedRequest=' + JSON.stringify(rejectedRequest) +  '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/rejectglobalinventoryrequests', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            });
+        }); 
+    }
 
     approveglobalinventoryrequest(siteData, requestId, selectedItem){
         var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&requestId=' + requestId + '&selectedItem=' + selectedItem + '&token=Bearer ' + this.AuthToken;
@@ -283,8 +305,8 @@ export class AuthService {
         });   
     }
 
-    savesiteinventory(siteData) {
-        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) +  '&token=Bearer ' + this.AuthToken;
+    savesiteinventory(siteData, notificationData) {
+        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
         var headers = new Headers();
         headers.append("Accept", 'application/json');
@@ -322,8 +344,8 @@ export class AuthService {
         });   
     }
 
-    savesitelabour(siteData) {
-        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) +  '&token=Bearer ' + this.AuthToken;
+    savesitelabour(siteData, notificationData) {
+        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
         var headers = new Headers();
         headers.append("Accept", 'application/json');

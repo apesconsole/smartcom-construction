@@ -49,6 +49,14 @@ export class SiteLabourEditPage {
   canCreateNewLabour = true;
   canCreateBill = false;
 
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
+  permission = [];
+
   contractTypeList = [
       {value: 'per_hour',  text: 'Hourly'},
       {value: 'per_day',   text: 'Daily' },
@@ -67,6 +75,7 @@ export class SiteLabourEditPage {
 	  this.selectedLabour = this.navParams.get('selectedLabour');
 	  this.canApprove = this.navParams.get('canApprove');
     this.canCreateNewLabour = this.navParams.get('canCreateNew');
+    this.permission = this.navParams.get('permission');
     if(this.canApprove && this.selectedLabour.billing.length > 0){
       this.evaluateBillStatus();
     }
@@ -78,12 +87,40 @@ export class SiteLabourEditPage {
 
   }
 
+  viewFinance(){
+    let viewFinance = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            viewFinance =  elem.viewFinance;
+            return;
+        }
+        return elem;
+    });
+    return viewFinance;
+  }
+
+  canCreateNewBill(){
+    let createNewBill = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            createNewBill = elem.createBill;
+            return;
+        }
+        return elem;
+    });
+    return createNewBill;
+  }
+
   evaluateBillStatus(){
       this.canCreateBill = true;
       if(!this.canCreateNewLabour){
           this.canCreateBill = false;
           return;
       } 
+      if(!this.canCreateNewBill()){
+          this.canCreateBill = false;
+          return;
+      }
       this.selectedLabour.billing
         .map((elem) => {
           if(this.canCreateBill && !elem.approved){
@@ -94,7 +131,7 @@ export class SiteLabourEditPage {
   }
 
   saveData(){
-      this.authservice.savesitelabour(this.selectedTaskData).then(
+      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -139,6 +176,10 @@ export class SiteLabourEditPage {
           return elem;
       });
       this.selectedTaskData.labour = newLabour;
+      this.notificationData.key = 'task_labour_edit_info';
+      this.notificationData.subject = 'Labour Information Updated';
+      this.notificationData.message = 'Labour Information Updated \r\n Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour Id:' + this.selectedLabour.labourId + '\r\n Description:' + this.selectedLabour.labourDescription + '\r\n Head Count:' + this.selectedLabour.count + '\r\n Rate:' + this.selectedLabour.currency + ' ' + this.selectedLabour.rate;
+
       this.saveData();
     }
   }
@@ -159,6 +200,7 @@ export class SiteLabourEditPage {
           return elem;
       });
       this.selectedTaskData.labour = newLabour;
+      this.notificationData.key = '';
       this.saveData();
     }
   }
@@ -179,6 +221,7 @@ export class SiteLabourEditPage {
           return elem;
       });
       this.selectedTaskData.labour = newLabour;
+      this.notificationData.key = '';
       this.saveData();
     }
   }
@@ -199,6 +242,10 @@ export class SiteLabourEditPage {
           return elem;
       });
       this.selectedTaskData.labour = newLabour;
+      this.notificationData.key = 'task_labour_approval_info';
+      this.notificationData.subject = 'Labour Information Approved';
+      this.notificationData.message = 'Labour Information Approved \r\n Labour Approved By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour Id:' + this.selectedLabour.labourId + '\r\n Description:' + this.selectedLabour.labourDescription + '\r\n Head Count:' + this.selectedLabour.count + '\r\n Rate:' + this.selectedLabour.currency + ' ' + this.selectedLabour.rate;
+
       this.saveData();
     }
   } 
@@ -207,7 +254,8 @@ export class SiteLabourEditPage {
     this.navCtrl.push(SiteLabourAddBillingPage, {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
-        selectedLabour: this.selectedLabour     
+        selectedLabour: this.selectedLabour,
+        permission: this.permission     
     });  
   }
 
@@ -215,7 +263,8 @@ export class SiteLabourEditPage {
     this.navCtrl.push(SiteLabourEditBillingPage, {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
-        selectedLabour: this.selectedLabour     
+        selectedLabour: this.selectedLabour,
+        permission: this.permission     
     });  
   }  
 

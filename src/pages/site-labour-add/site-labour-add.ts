@@ -46,6 +46,12 @@ export class SiteLabourAddPage {
   serverData: any;
   isLocked = false;
 
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
   contractTypeList = [
       {value: 'per_hour',  text: 'Hourly'},
       {value: 'per_day',   text: 'Daily' },
@@ -70,7 +76,7 @@ export class SiteLabourAddPage {
   }
 
   saveField(){
-      this.authservice.savesitelabour(this.selectedTaskData).then(
+      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {

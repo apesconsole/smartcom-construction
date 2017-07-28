@@ -46,7 +46,11 @@ export class SiteInventoryEditPage {
     approvedBy: '',
     approvalDate: ''
   }
+
+  availableGblConfig = [];
+
   gblConfig = {
+    currentLocation: '',
     item: '',
     uom: '',
     quantity: 0,
@@ -57,6 +61,8 @@ export class SiteInventoryEditPage {
   canApprove = false;
   canCreateNewOrder = true;
   canRequest = true;
+
+  permission = [];
 
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
@@ -73,8 +79,43 @@ export class SiteInventoryEditPage {
 	  this.selectedItem = this.navParams.get('selectedItem');
 	  this.canApprove = this.navParams.get('canApprove');
     this.canCreateNewOrder = this.navParams.get('canCreateNew');
+    this.permission = this.navParams.get('permission');
     this.canRequest = true;
     this.loadGlobalInventoryConfig();
+  }
+
+  viewFinance(){
+    let viewFinance = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            viewFinance =  elem.viewFinance;
+            return;
+        }
+        return elem;
+    });
+    return viewFinance;
+  }
+
+  canCreateOrder(){
+    let createNewOrder = false;
+    this.permission.map((elem) => {
+        if(elem.siteId == this.selectedSite){
+            createNewOrder = elem.createOrder;
+            return;
+        }
+        return elem;
+    });
+    return createNewOrder;
+  }
+
+  selectGlobalItem(item){
+      this.gblConfig = {
+        currentLocation: item.currentLocation,
+        item: item.item,
+        uom: item.uom,
+        quantity: item.quantity,
+        requestedQuantity: 0
+      }
   }
 
   createOrder(){
@@ -90,7 +131,8 @@ export class SiteInventoryEditPage {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
         selectedItem: this.selectedItem,
-        canApprove: this.canApprove     
+        canApprove: this.canApprove,
+        permission: this.permission     
     });
   }
 
@@ -164,8 +206,14 @@ export class SiteInventoryEditPage {
       }); 
   }
 
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
   saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData).then(
+      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -219,6 +267,7 @@ export class SiteInventoryEditPage {
   }
 
   searchPendingRequests(){
+    /*
       this.globalConfigData.requests
         .filter((request) =>{
           return (request.item   == this.selectedItem.item &&
@@ -235,6 +284,7 @@ export class SiteInventoryEditPage {
             }
             return request;
         });
+      */
   }
  
   loadGlobalInventoryConfig(){
@@ -248,10 +298,12 @@ export class SiteInventoryEditPage {
                this.searchPendingRequests();
                if(this.canRequest){
                   if(item.item == this.selectedItem.item){
-                      this.gblConfig.item = item.item;
-                      this.gblConfig.uom = item.uom;
-                      this.gblConfig.quantity = item.quantity;
-                      this.gblConfig.requestedQuantity = 0;
+                      this.availableGblConfig.push({
+                          item: item.item,
+                          currentLocation: item.currentLocation, 
+                          uom: item.uom,
+                          quantity:item.quantity
+                      });
                   }
                 }
                 return item;
@@ -282,6 +334,17 @@ export class SiteInventoryEditPage {
           item: this.gblConfig.item,
           uom: this.gblConfig.uom,
           quantity: this.gblConfig.requestedQuantity,
+          transfer: this.gblConfig.currentLocation != this.selectedSite,
+          transferOrder: {
+              transferOrderId: '',
+              shippingVendor:'',
+              shippingId:'',
+              shippingCost: 0,
+              shippingType: '',
+              trackingId: '',
+              currency: 'INR',
+              payment: 0
+          },
           requestedBy: this.userId,
           requestDate: new Date(),
           rejected: false,
