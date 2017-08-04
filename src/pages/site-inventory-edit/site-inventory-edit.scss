@@ -1,3 +1,6 @@
 page-site-inventory-edit {
-
+	._item_detail {
+		font-size: 14px;
+		color: map-get($colors, apegrey);
+	}
 }

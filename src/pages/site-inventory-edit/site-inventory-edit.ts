@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Events} from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
 
 import { SiteInventoryCreateOrderPage } from '../site-inventory-create-order/site-inventory-create-order';
 import { SiteInventoryOrdersPage } from '../site-inventory-orders/site-inventory-orders';
+import { SiteInventoryRequestsPage } from '../site-inventory-requests/site-inventory-requests';
 
 @IonicPage()
 @Component({
@@ -33,15 +34,34 @@ export class SiteInventoryEditPage {
   	uom:'',
     totalPrice: 0,
     totalPayment: 0,    
-  	orders: []
+  	orders: [],
+    requests: [],
+    approved: false
   }
   pendingRequest = {
     requestId: '',
+    siteId: '',
+    taskId: '', 
+    currentLocation:'',        
     item: '',
     uom: '',
-    quantity: 0,
+    quantity: '',
+    transfer: '',
+    requestStatus: 'Open', //Open->Accepted->Transfered->Shipped->Received->Complete
+    transferOrder: {
+        transferOrderId: '',
+        shippingVendor:'',
+        shippingCost: 0,
+        shippingType: '',
+        trackingId: '',
+        currency: 'INR',
+        payment: 0
+    },
     requestedBy: '',
     requestDate: '',
+    rejected: false,
+    rejectedBy: '',
+    rejectionDate: '',
     approved: false,
     approvedBy: '',
     approvalDate: ''
@@ -56,6 +76,7 @@ export class SiteInventoryEditPage {
     quantity: 0,
     requestedQuantity: 0
   }
+
   serverData: any;
   isLocked = false;
   canApprove = false;
@@ -64,16 +85,31 @@ export class SiteInventoryEditPage {
 
   permission = [];
 
+  notificationData = {
+    key: '',
+    subject: '',
+    message: ''
+  }
+
+  displayText = {
+    siteName: '',
+    taskDescription: ''
+  }
+
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
     var _max = Math.floor(max);
     return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
-      this.userId = this.navParams.get('userId');
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
+    this.events.unsubscribe('refreshInventoryOrder');
+    this.events.unsubscribe('refreshInventoryItem');
+    this.events.unsubscribe('refreshInventoryRequest');
+    this.userId = this.navParams.get('userId');
     //Task Data Contains the Specific Task Inventory
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');
+    this.displayText = this.navParams.get('displayText');
 	  this.selectedSite = this.selectedTaskData.siteId;
     this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
@@ -81,7 +117,20 @@ export class SiteInventoryEditPage {
     this.canCreateNewOrder = this.navParams.get('canCreateNew');
     this.permission = this.navParams.get('permission');
     this.canRequest = true;
-    this.loadGlobalInventoryConfig();
+    this.events.subscribe('refreshInventoryOrder', (_freshData) => {
+        this.selectedItem.orders = _freshData;
+    });
+    this.events.subscribe('refreshInventoryItem', (_itemData) => {
+        this.selectedItem.quantity = Number(_itemData.quantity);
+        this.selectedItem.totalPrice = Number(_itemData.totalPrice); 
+        this.selectedItem.totalPayment = Number(_itemData.totalPayment); 
+    });
+    this.events.subscribe('refreshInventoryRequest', (_requestData) => {
+        this.pendingRequest = _requestData;
+        if(Number(this.pendingRequest.transferOrder.payment) == Number(this.pendingRequest.transferOrder.shippingCost))
+           this.loadPendingRequest();
+    });
+    this.loadPendingRequest();
   }
 
   viewFinance(){
@@ -100,7 +149,7 @@ export class SiteInventoryEditPage {
     let createNewOrder = false;
     this.permission.map((elem) => {
         if(elem.siteId == this.selectedSite){
-            createNewOrder = elem.createOrder;
+            createNewOrder = elem.createOrder && this.selectedItem.approved;
             return;
         }
         return elem;
@@ -122,7 +171,8 @@ export class SiteInventoryEditPage {
     this.navCtrl.push(SiteInventoryCreateOrderPage, {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
-        selectedItem: this.selectedItem   
+        selectedItem: this.selectedItem,
+        displayText: this.displayText
     });
   }
 
@@ -132,7 +182,8 @@ export class SiteInventoryEditPage {
         userId: this.userId,
         selectedItem: this.selectedItem,
         canApprove: this.canApprove,
-        permission: this.permission     
+        permission: this.permission,
+        displayText: this.displayText     
     });
   }
 
@@ -162,26 +213,15 @@ export class SiteInventoryEditPage {
   approveField(){
     if(!this.isLocked){
       this.isLocked = true;
-      var newInventry = [];
-      this.selectedTaskData.inventory
-      	.map((elem) => {
-      	  if(elem.item == this.selectedItem.item && !this.isLocked){
-      	  	  elem.quantity = Number(this.selectedItem.quantity);
-      	  	  elem.approved = true;
-      	  	  elem.approvedBy = this.userId;
-      	  	  elem.approvalDate = new Date();
-      	  	  console.log('Changed -> ' + elem.item);
-      	  }
-      	  newInventry[newInventry.length] = elem;
-		      return elem;
-	    });
-      this.selectedTaskData.inventory = newInventry;
-      this.saveData();
+      this.notificationData.key = 'task_inventory_approval_info';
+      this.notificationData.subject = 'Item Approved Notification';
+      this.notificationData.message = 'Item Approved \r\n Item Approved By:' + this.userId + '\r\n Site :' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription;
+      this.approveInventoryData();
     }
   }
 
-  saveRequestData(){
-      this.authservice.saveglobalinventoryrequest(this.globalConfigData).then(
+  saveRequestData(requestData){
+      this.authservice.saveglobalinventoryrequest(requestData, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -199,6 +239,11 @@ export class SiteInventoryEditPage {
                 });
                 requestAlertFailureAlert.present();
             }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });              
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -206,14 +251,9 @@ export class SiteInventoryEditPage {
       }); 
   }
 
-  notificationData = {
-    key: '',
-    subject: '',
-    message: ''
-  }
-
-  saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
+  approveInventoryData(){
+      let _itemName = this.selectedItem.item;
+      this.authservice.approveinventory(_itemName, this.selectedSite, this.selectedTask, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -231,6 +271,11 @@ export class SiteInventoryEditPage {
                 });
                 dataEditFailureAlert.present();
             }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });            
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -238,53 +283,25 @@ export class SiteInventoryEditPage {
       }); 
   }
 
-  approveRequestData(){
-      this.authservice.approveglobalinventoryrequest(this.selectedTaskData, this.pendingRequest.requestId, this.selectedItem.item).then(
-        data => {
-            this.serverData = data;
-            if(this.serverData.operation) {
-                let dataEditAlert = this.alertCtrl.create({
-                    title: 'Success',
-                    subTitle: 'Request Approved',
-                    buttons: ['ok']
-                });
-                this.selectedItem.quantity = Number(this.selectedItem.quantity) + Number(this.pendingRequest.quantity);
-                this.pendingRequest.approved = true;
-                dataEditAlert.present();
-            } else {
-                var dataEditFailureAlert = this.alertCtrl.create({
-                    title: 'Failure',
-                    subTitle: 'Cound Not Approve',
-                    buttons: ['ok']
-                });
-                dataEditFailureAlert.present();
-            }
-            this.navCtrl.pop();
-        }, error => {
-           this.navCtrl.setRoot(LoginPage);
-           this.message = error.message;
-      }); 
+  loadRequestData(){
+    this.navCtrl.push(SiteInventoryRequestsPage, {
+        userId: this.userId,
+        displayText: this.displayText,
+        pendingRequest: this.pendingRequest,
+        permission: this.permission        
+    });
   }
 
-  searchPendingRequests(){
-    /*
-      this.globalConfigData.requests
-        .filter((request) =>{
-          return (request.item   == this.selectedItem.item &&
-                  request.siteId == this.selectedTaskData.siteId && 
-                  request.taskId == this.selectedTaskData.taskId);
-        })
+  loadPendingRequest(){
+      this.selectedItem.requests
         .map((request) => {
-            if(!request.approved && !request.rejected){
-                this.pendingRequest.requestId = request.requestId;
-                this.pendingRequest.item = request.item;
-                this.pendingRequest.uom = request.uom;
-                this.pendingRequest.quantity = request.quantity;
+            if(request.requestStatus != 'Complete' && request.requestStatus != 'Cancelled'){
+                this.pendingRequest = request;
                 this.canRequest = false;
             }
             return request;
         });
-      */
+        if(this.canRequest) this.loadGlobalInventoryConfig();
   }
  
   loadGlobalInventoryConfig(){
@@ -293,20 +310,10 @@ export class SiteInventoryEditPage {
           this.serverGlobalData = data;
           this.globalConfigData = this.serverGlobalData.data;
           this.globalConfigData.items
-            .map((item) => {
-               //This sets the canRequest flag
-               this.searchPendingRequests();
-               if(this.canRequest){
-                  if(item.item == this.selectedItem.item){
-                      this.availableGblConfig.push({
-                          item: item.item,
-                          currentLocation: item.currentLocation, 
-                          uom: item.uom,
-                          quantity:item.quantity
-                      });
-                  }
-                }
-                return item;
+            .map((_i) => {
+                if(_i.item == this.selectedItem.item)
+                  this.availableGblConfig.push(_i);
+                return _i;
             });
       }, error => {
          this.navCtrl.setRoot(LoginPage);
@@ -325,16 +332,23 @@ export class SiteInventoryEditPage {
       });
       invalidQtyAlert.present();
       return;        
-    }
+    }  
     if(!this.isLocked){
-      this.globalConfigData.requests.push({
+
+      this.notificationData.key = 'task_global_inventory_request';
+      this.notificationData.subject = 'Global Inventory Request Notification';
+      this.notificationData.message = 'Global Inventory Request \r\n Requested By:' + this.userId + '\r\n Site :' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Requested Item:' + this.gblConfig.item + '\r\n Requested Quantity:' + this.gblConfig.quantity + ' ' + this.gblConfig.uom;
+
+      this.saveRequestData({
           requestId: this.getRandomInt(10000000000, 99999999999),
           siteId:this.selectedSite,
           taskId: this.selectedTask,          
           item: this.gblConfig.item,
+          currentLocation: this.gblConfig.currentLocation,
           uom: this.gblConfig.uom,
           quantity: this.gblConfig.requestedQuantity,
           transfer: this.gblConfig.currentLocation != this.selectedSite,
+          requestStatus: 'Open', //Open->Accepted->Transfered->Shipped->Received->Complete
           transferOrder: {
               transferOrderId: '',
               shippingVendor:'',
@@ -354,7 +368,6 @@ export class SiteInventoryEditPage {
           approvedBy: '',
           approvalDate: ''
       });
-      this.saveRequestData();
     }
   }
 

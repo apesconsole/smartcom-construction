@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Events } from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
@@ -29,7 +29,6 @@ export class SiteInventoryCreateOrderPage {
   }
 
   orderDetails = {
-  	item: '',
     uom: '',
   	quantity: 0,
   	orderId: '',
@@ -61,6 +60,11 @@ export class SiteInventoryCreateOrderPage {
     message: ''
   }
 
+  displayText = {
+    siteName: '',
+    taskDescription: ''
+  }
+
   serverData: any;
   isLocked = false;
   canApprove = false;
@@ -68,30 +72,29 @@ export class SiteInventoryCreateOrderPage {
   getRandomInt(min, max) {
   	var _min = Math.ceil(min);
   	var _max = Math.floor(max);
-  	return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+  	return 'ITMORDID' + String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
   }
 
   setTotalPrice(){
       this.orderDetails.totalPrice = Number(this.orderDetails.quantity * this.orderDetails.unitPrice) + Number(this.orderDetails.tax);
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
-      this.userId = this.navParams.get('userId');
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
+    this.userId = this.navParams.get('userId');
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');
     this.isLocked = false;
 	  this.selectedSite = this.selectedTaskData.siteId;
     this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedItem = this.navParams.get('selectedItem');
 	  this.canApprove = this.navParams.get('canApprove');
-
-	  this.orderDetails.item = this.selectedItem.item;
+    this.displayText = this.navParams.get('displayText');
 	  this.orderDetails.uom = this.selectedItem.uom;
 	  this.orderDetails.createdBy = this.userId;
 	  this.orderDetails.orderId = this.getRandomInt(10000000000, 99999999999);
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
+      this.authservice.addinventoryorder(this.selectedItem.item, this.orderDetails, this.selectedSite, this.selectedTask, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -100,6 +103,7 @@ export class SiteInventoryCreateOrderPage {
                     subTitle: 'Data Saved',
                     buttons: ['ok']
                 });
+                this.events.publish('refreshInventoryOrder', this.serverData.orders); 
                 dataEditAlert.present();
             } else {
                 var dataEditFailureAlert = this.alertCtrl.create({
@@ -110,6 +114,11 @@ export class SiteInventoryCreateOrderPage {
                 dataEditFailureAlert.present();
                 this.isLocked = false;
             }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });           
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -120,17 +129,6 @@ export class SiteInventoryCreateOrderPage {
   createOrder(){
     if(!this.isLocked){
         this.isLocked = true;
-        this.selectedItem.orders.push(this.orderDetails);
-        var newInventry = [];
-        this.selectedTaskData.inventory
-        	.map((elem) => {
-        	  if(elem.item == this.selectedItem.item){
-        	  		elem.orders = this.selectedItem.orders;
-        	  }
-          	  newInventry[newInventry.length] = elem;
-    		  return elem;
-    	  });
-        this.selectedTaskData.inventory = newInventry;
   	    this.saveData();	
     }      
   }

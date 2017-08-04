@@ -63,10 +63,15 @@ export class SiteLabourAddBillingPage {
     message: ''
   }
 
+  displayText = {
+    siteName: '',
+    taskDescription: ''
+  }
+
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
     var _max = Math.floor(max);
-    return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+    return 'LBRBILLID' + String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
   }
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
@@ -74,14 +79,15 @@ export class SiteLabourAddBillingPage {
       //Task Data Contains the Specific Task Labour
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');
 	  this.selectedSite = this.selectedTaskData.siteId;
-      this.selectedTask = this.selectedTaskData.taskId;
+    this.selectedTask = this.selectedTaskData.taskId;
 	  this.selectedLabour = this.navParams.get('selectedLabour');
 	  this.billingDetail.createdBy = this.userId;
+    this.displayText = this.navParams.get('displayText');
 	  this.billingDetail.billingId = this.getRandomInt(10000000000, 99999999999);
   }
 
-  saveData(){
-      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
+  addBillingData(){
+      this.authservice.addlabourbilling(this.selectedLabour.labourId, this.billingDetail, this.selectedSite, this.selectedTask, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -90,6 +96,7 @@ export class SiteLabourAddBillingPage {
                     subTitle: 'Data Saved',
                     buttons: ['ok']
                 });
+                this.events.publish('refreshLabourBilling', this.serverData.labour.billing); 
                 dataEditAlert.present();
             } else {
                 var dataEditFailureAlert = this.alertCtrl.create({
@@ -100,6 +107,11 @@ export class SiteLabourAddBillingPage {
                 dataEditFailureAlert.present();
             }
             this.events.publish('evaluateCreateBilling');
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });               
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -110,18 +122,11 @@ export class SiteLabourAddBillingPage {
   addBilling(){
   	if(!this.isLocked){
   		this.isLocked = true;
-	    var newLabour = [];
-	    this.selectedTaskData.labour
-	        .map((elem) => {
-	          if(elem.labourId == this.selectedLabour.labourId){
-	             elem.billing.push(this.billingDetail); 
-	             console.log(elem.labourId)
-	          }
-	          newLabour[newLabour.length] = elem;
-	          return elem;
-	    });
-	    this.selectedTaskData.labour = newLabour;
-	    this.saveData();
+
+      this.notificationData.key = 'task_labour_bill_create_info';
+      this.notificationData.subject = 'Labour Bill Notification';
+      this.notificationData.message = 'Labour Bill  \r\n Bill Created By:' + this.userId + '\r\n Site:' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Labour Id:' + this.selectedLabour.labourId + '\r\n Labour Description:' + this.selectedLabour.labourDescription + '\r\n Total Bill:' + this.billingDetail.currency + ' ' + this.billingDetail.billingAmount;
+	    this.addBillingData();
   	}
   }
 

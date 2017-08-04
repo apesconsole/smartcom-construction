@@ -55,6 +55,11 @@ export class SiteLabourEditPage {
     message: ''
   }
 
+  displayText = {
+    siteName: '',
+    taskDescription: ''
+  }
+
   permission = [];
 
   contractTypeList = [
@@ -67,7 +72,11 @@ export class SiteLabourEditPage {
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
-      this.userId = this.navParams.get('userId');
+    this.events.unsubscribe('evaluateCreateBilling');
+    this.events.unsubscribe('refreshLabourBilling');
+    this.events.unsubscribe('refreshLabour');
+    
+    this.userId = this.navParams.get('userId');
       //Task Data Contains the Specific Task Labour
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');
 	  this.selectedSite = this.selectedTaskData.siteId;
@@ -76,14 +85,24 @@ export class SiteLabourEditPage {
 	  this.canApprove = this.navParams.get('canApprove');
     this.canCreateNewLabour = this.navParams.get('canCreateNew');
     this.permission = this.navParams.get('permission');
+    this.displayText = this.navParams.get('displayText');
     if(this.canApprove && this.selectedLabour.billing.length > 0){
-      this.evaluateBillStatus();
+        this.evaluateBillStatus();
     }
     else if(this.canApprove) this.canCreateBill = true; 
 
-    events.subscribe('evaluateCreateBilling', () => {
+    this.events.subscribe('evaluateCreateBilling', () => {
         this.evaluateBillStatus();
     });
+
+    this.events.subscribe('refreshLabourBilling', (_freshData) => {
+        this.selectedLabour.billing = _freshData;
+        this.evaluateBillStatus();
+    });
+    this.events.subscribe('refreshLabour', (_labourData) => {
+        this.selectedLabour.totalBill = Number(_labourData.totalBill); 
+        this.selectedLabour.totalPayment = Number(_labourData.totalPayment); 
+    }); 
 
   }
 
@@ -130,8 +149,8 @@ export class SiteLabourEditPage {
       });
   }
 
-  saveData(){
-      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
+  editData(){
+      this.authservice.editlabour(this.selectedLabour, this.selectedSite, this.selectedTask, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -149,6 +168,10 @@ export class SiteLabourEditPage {
                 });
                 dataEditFailureAlert.present();
             }
+            this.events.publish('refreshLabourData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            }); 
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -159,94 +182,39 @@ export class SiteLabourEditPage {
   editLabour(){
     if(!this.isLocked){
       this.isLocked = true;
-      var newLabour = [];
-      this.selectedTaskData.labour
-        .map((elem) => {
-          if(elem.labourId == this.selectedLabour.labourId){
-              elem.contractor = this.selectedLabour.contractor;
-              elem.contractType = this.selectedLabour.contractType;
-              elem.rate = this.selectedLabour.rate;
-              elem.currency = this.selectedLabour.currency;
-              elem.count = this.selectedLabour.count;
-              elem.updatedBy = this.userId;
-              elem.updateDate = new Date();
-              console.log('Changed -> ' + elem.labourId);
-          }
-          newLabour[newLabour.length] = elem;
-          return elem;
-      });
-      this.selectedTaskData.labour = newLabour;
       this.notificationData.key = 'task_labour_edit_info';
       this.notificationData.subject = 'Labour Information Updated';
       this.notificationData.message = 'Labour Information Updated \r\n Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour Id:' + this.selectedLabour.labourId + '\r\n Description:' + this.selectedLabour.labourDescription + '\r\n Head Count:' + this.selectedLabour.count + '\r\n Rate:' + this.selectedLabour.currency + ' ' + this.selectedLabour.rate;
-
-      this.saveData();
+      this.editData();
     }
   }
 
   activateLabour(){
     if(!this.isLocked){
       this.isLocked = true;
-      var newLabour = [];
-      this.selectedTaskData.labour
-        .map((elem) => {
-          if(elem.labourId == this.selectedLabour.labourId){
-              elem.active = true;
-              elem.updatedBy = this.userId;
-              elem.updateDate = new Date();
-              console.log('Changed -> ' + elem.labourId);
-          }
-          newLabour[newLabour.length] = elem;
-          return elem;
-      });
-      this.selectedTaskData.labour = newLabour;
+      this.selectedLabour.active = true;
       this.notificationData.key = '';
-      this.saveData();
+      this.editData();
     }
   }
 
   deActivateLabour(){
     if(!this.isLocked){
       this.isLocked = true;
-      var newLabour = [];
-      this.selectedTaskData.labour
-        .map((elem) => {
-          if(elem.labourId == this.selectedLabour.labourId){
-              elem.active = false;
-              elem.updatedBy = this.userId;
-              elem.updateDate = new Date();
-              console.log('Changed -> ' + elem.labourId);
-          }
-          newLabour[newLabour.length] = elem;
-          return elem;
-      });
-      this.selectedTaskData.labour = newLabour;
+      this.selectedLabour.active = false;
       this.notificationData.key = '';
-      this.saveData();
+      this.editData();
     }
   }
 
   approveLabour(){
     if(!this.isLocked){
       this.isLocked = true;
-      var newLabour = [];
-      this.selectedTaskData.labour
-        .map((elem) => {
-          if(elem.labourId == this.selectedLabour.labourId){
-              elem.approved = true;
-              elem.approvedBy = this.userId;
-              elem.approvalDate = new Date();
-              console.log('Changed -> ' + elem.labourId);
-          }
-          newLabour[newLabour.length] = elem;
-          return elem;
-      });
-      this.selectedTaskData.labour = newLabour;
+      this.selectedLabour.approved = true;
       this.notificationData.key = 'task_labour_approval_info';
       this.notificationData.subject = 'Labour Information Approved';
       this.notificationData.message = 'Labour Information Approved \r\n Labour Approved By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour Id:' + this.selectedLabour.labourId + '\r\n Description:' + this.selectedLabour.labourDescription + '\r\n Head Count:' + this.selectedLabour.count + '\r\n Rate:' + this.selectedLabour.currency + ' ' + this.selectedLabour.rate;
-
-      this.saveData();
+      this.editData();
     }
   } 
 
@@ -255,7 +223,8 @@ export class SiteLabourEditPage {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
         selectedLabour: this.selectedLabour,
-        permission: this.permission     
+        permission: this.permission,
+        displayText: this.displayText     
     });  
   }
 
@@ -264,7 +233,8 @@ export class SiteLabourEditPage {
         selectedTaskData: this.selectedTaskData,
         userId: this.userId,
         selectedLabour: this.selectedLabour,
-        permission: this.permission     
+        permission: this.permission,
+        displayText: this.displayText     
     });  
   }  
 

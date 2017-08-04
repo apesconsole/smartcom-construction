@@ -10,7 +10,9 @@
 
 <ion-content>
   <ion-item-group>
-    <ion-item-divider color="primary">Selected Site : {{selectedSite}}, Task Id {{selectedTask}}</ion-item-divider>
+    <ion-item-divider color="primary">
+    	Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+    </ion-item-divider>
 	<ion-item color="light">
 		  <ion-label>Labour Id</ion-label>
 		  <ion-input 

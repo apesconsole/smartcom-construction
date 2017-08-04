@@ -6,10 +6,9 @@
 
 </ion-header>
 
-
 <ion-content>
   <ion-item-group>
-    <ion-item-divider color="primary">Selected Site : {{selectedSite}} Approved Inventory Item Status</ion-item-divider>
+    <ion-item-divider color="primary">Site : {{displayText.siteName}} Approved Inventory </ion-item-divider>
 	<ion-item color="secondary">
       <ion-label>
       	{{selectedItem.item}}
@@ -27,10 +26,6 @@
       		Order : {{order.orderId}} 
       		<ion-badge *ngIf="order.orderStatus == 'Complete'" color="secondary">Satus: {{order.orderStatus}} </ion-badge>
       		<ion-badge *ngIf="order.orderStatus != 'Complete'" color="danger">Satus: {{order.orderStatus}} </ion-badge>
-
-      		<ion-fab right>
-	  			<ion-icon name="arrow-dropdown"></ion-icon>
-	  		</ion-fab>
       	</ion-item-divider>
 		<ion-item color="light">
 			<ion-label>Vendor</ion-label>
@@ -145,7 +140,7 @@
 			<button *ngIf="order.orderStatus != 'Complete'" color="primary" ion-button (click)="completeOrder(order)"> Complete </button>			
 		</ion-item>
 	    <ion-item *ngIf="order.approved && order.totalPrice > order.totalPayment && canPay()">
-	        <button item-end color="warining" ion-button (click)="payBill(order)"> Pay </button>
+	        <button item-end ion-button (click)="payBill(order)"> Pay </button>
 	  	</ion-item>	
 	  	<ion-item *ngIf="order.approved && order.totalPrice == order.totalPayment">
 	  		Paid in Full

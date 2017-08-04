@@ -17,29 +17,165 @@
 
   <ion-card *ngFor="let site of sites">
 
-    <ion-item color="light">
+    <ion-item color="primary">
       <ion-icon name="list" item-left large color="secondary"></ion-icon> 
-      <h2><strong>Project: {{site.projectId}}</strong></h2>
-      <p>Site: {{site.siteName}}</p>
+      <span>Project: {{site.projectId}} / {{site.siteName}}</span>
       <p>{{site.address}}</p>
     </ion-item>
+    <br/>
     <ion-card-content>
-      <ion-item>
-        <h1>Task Status</h1>
-        <p>Completed : {{site.taskMatrix.totalCompletedTasks}}</p>
-        <p>Waiting   : {{site.taskMatrix.totalWaitingTasks}}</p>
-        <p>Held      : {{site.taskMatrix.totalHeldTasks}}</p>
-        <p>Running   : {{site.taskMatrix.totalRunningTasks}}</p>
-      </ion-item>
-      <ion-item *ngIf="site.canViewFinance">
-        <h1>Task Financials</h1>
-        <p>Actual Cost : {{site.taskMatrix.currency}} {{site.taskMatrix.totalCost}}</p>
-        <p>Estimated Cost   : {{site.taskMatrix.currency}} {{site.taskMatrix.totalEstimatedCost}}</p>
-        <p *ngIf="site.taskMatrix.deviation > 0">Deviation      : {{site.taskMatrix.currency}} {{site.taskMatrix.deviation}}</p>
-        <p *ngIf="site.taskMatrix.savings > 0">Remaining Budget   : {{site.taskMatrix.currency}} {{site.taskMatrix.savings}}</p>        
-        <p>Total Payments  : {{site.taskMatrix.currency}} {{site.taskMatrix.totalPayment}}</p>
-        <hr/>
-      </ion-item> 
+      <h1 class="_header">Status</h1>
+      <ion-row>
+        <ion-col>
+          <div>
+            Completed : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+            {{site.taskMatrix.totalCompletedTasks}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div>
+            Waiting : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+            {{site.taskMatrix.totalWaitingTasks}}
+          </div>
+        </ion-col>
+      </ion-row> 
+      <ion-row>
+        <ion-col>
+          <div>
+            On Hold : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+            {{site.taskMatrix.totalHeldTasks}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div>
+            Running : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+            {{site.taskMatrix.totalRunningTasks}}
+          </div>
+        </ion-col>
+      </ion-row> 
+      <ion-row>
+        <ion-col>
+          <div>
+            Active Labours : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+            {{site.taskMatrix.totalLabour}}
+          </div>
+        </ion-col>
+      </ion-row>                         
+    </ion-card-content>
+    <hr/>
+    <ion-card-content *ngIf="site.canViewFinance">
+      <h1 class="_header">Financials ({{site.taskMatrix.currency}})</h1>   
+      <ion-row>
+        <ion-col>
+          <div>
+            Inventory Cost : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.actualInventoryCost}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div>
+            Labour Cost : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.actualLabourCost}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <hr/>        
+      <ion-row>
+        <ion-col>
+          <div>
+            Total Cost : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.totalCost}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div>
+            Total Payments : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.totalPayment}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <hr/>
+      <ion-row>
+        <ion-col>
+          <div>
+            Estimated Cost : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.totalEstimatedCost}}
+          </div>
+        </ion-col>
+      </ion-row>            
+      <ion-row>
+        <ion-col>
+          <div>
+            Deviation : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.deviation}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div>
+            Budget Ballance : 
+          </div>
+        </ion-col>
+        <ion-col text-right>
+          <div>
+             {{site.taskMatrix.savings}}
+          </div>
+        </ion-col>
+      </ion-row>
+      <hr/>                                       
       <ion-item *ngIf="site.canViewFinance">
           <button ion-button icon-left clear item-end>
             <ion-icon name="share"></ion-icon>

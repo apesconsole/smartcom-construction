@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Events } from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
@@ -30,7 +30,6 @@ export class SiteInventoryOrdersPage {
   }
 
   order = {
-    item: '',
     uom: '',
     quantity: 0,
     orderId: '',
@@ -65,6 +64,11 @@ export class SiteInventoryOrdersPage {
     message: ''
   }
 
+  displayText = {
+    siteName: '',
+    taskDescription: ''
+  }
+
   serverData: any;
   isLocked = false;
   canApprove = false;
@@ -74,14 +78,14 @@ export class SiteInventoryOrdersPage {
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
     var _max = Math.floor(max);
-    return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+    return 'ORDPMTID' + String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
   }
 
   setTotalPrice(orderDetails){
       orderDetails.totalPrice = Number(orderDetails.quantity * orderDetails.unitPrice) + Number(orderDetails.tax);
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
     this.userId = this.navParams.get('userId');
 	  this.selectedTaskData = this.navParams.get('selectedTaskData');
 	  this.selectedSite = this.selectedTaskData.siteId;
@@ -89,6 +93,7 @@ export class SiteInventoryOrdersPage {
 	  this.selectedItem = this.navParams.get('selectedItem');
     this.permission = this.navParams.get('permission');
 	  this.canApprove = this.navParams.get('canApprove');
+    this.displayText = this.navParams.get('displayText');
   }
 
   canPay(){
@@ -103,8 +108,8 @@ export class SiteInventoryOrdersPage {
     return pay;
   }
 
-  saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
+  deleteData(order){
+      this.authservice.deleteinventoryorder(this.selectedItem.item, order, this.selectedSite, this.selectedTask, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -113,6 +118,8 @@ export class SiteInventoryOrdersPage {
                     subTitle: 'Data Saved',
                     buttons: ['ok']
                 });
+
+                this.events.publish('refreshInventoryOrder', this.serverData.orders); 
                 dataEditAlert.present();
             } else {
                 var dataEditFailureAlert = this.alertCtrl.create({
@@ -122,6 +129,11 @@ export class SiteInventoryOrdersPage {
                 });
                 dataEditFailureAlert.present();
             }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });             
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -130,110 +142,163 @@ export class SiteInventoryOrdersPage {
   }
 
   deleteOrder(order){
-      var newOrders = [];
-    this.selectedItem.orders
-      .map((o) => {
-        if(o.orderId != order.orderId){
-          newOrders[newOrders.length] = o;
-        }
-        return o;
-      });
-      this.selectedItem.orders = newOrders;
-      var newInventry = [];
-      this.selectedTaskData.inventory
-        .map((elem) => {
-          if(elem.item == this.selectedItem.item){
-              elem.orders = this.selectedItem.orders;
-          }
-          newInventry[newInventry.length] = elem;
-      return elem;
-    });
-    this.saveData();  
+    if(!this.isLocked) {
+        this.isLocked = true;
+        this.deleteData(order);
+    }
   }
 
-  approveOrder(order){
-  	  var newOrders = [];
-	  this.selectedItem.orders
-	  	.map((o) => {
-	  		if(o.orderId == order.orderId){
-	  			o.approved = true;
-	  			o.approvedBy = this.userId;
-	  			o.approvalDate = new Date();
-          o.totalPayment = 0;
-          this.selectedItem.totalPrice = Number(this.selectedItem.totalPrice) + Number(o.totalPrice);
-	  			this.selectedItem.quantity = Number(this.selectedItem.quantity) + Number(o.quantity);
-	  		}
-	  		newOrders[newOrders.length] = o;
-	  		return o;
-	  	});
-	    this.selectedItem.orders = newOrders;
-      var newInventry = [];
-      this.selectedTaskData.inventory
-      	.map((elem) => {
-      	  if(elem.item == this.selectedItem.item){
-      	  		elem.orders = this.selectedItem.orders;
-      	  		elem.quantity = this.selectedItem.quantity;
-              elem.totalPrice = Number(this.selectedItem.totalPrice);
-      	  }
-      	  newInventry[newInventry.length] = elem;
-		  return elem;
-	  });
-    this.selectedTaskData.inventory = newInventry;
-    this.notificationData.key = 'task_inventory_approval_info';
-    this.notificationData.subject = 'Order Approved Notification';
-    this.notificationData.message = 'Order Approved \r\n Order Approved By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Order Id:' + order.orderId + '\r\n Ordered Item:' + order.item + '\r\n Total Items:' + order.quantity + '\r\n Total Price:' + order.currency + ' ' + order.totalPrice;
-	  this.saveData();	
+  completeData(order){
+      this.authservice.completeinventoryorder(this.selectedItem.item, order, this.selectedSite, this.selectedTask, this.notificationData).then(
+        data => {
+            this.serverData = data;
+            if(this.serverData.operation) {
+                let dataEditAlert = this.alertCtrl.create({
+                    title: 'Success',
+                    subTitle: 'Data Saved',
+                    buttons: ['ok']
+                });
 
+                this.events.publish('refreshInventoryOrder', this.serverData.orders); 
+                dataEditAlert.present();
+            } else {
+                var dataEditFailureAlert = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Data Not Saved',
+                    buttons: ['ok']
+                });
+                dataEditFailureAlert.present();
+            }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });             
+            this.navCtrl.pop();
+        }, error => {
+           this.navCtrl.setRoot(LoginPage);
+           this.message = error.message;
+      }); 
+  }
+
+  approveData(order){
+      this.authservice.approveinventoryorder(this.selectedItem.item, order, this.selectedSite, this.selectedTask, this.notificationData).then(
+        data => {
+            this.serverData = data;
+            if(this.serverData.operation) {
+                let dataEditAlert = this.alertCtrl.create({
+                    title: 'Success',
+                    subTitle: 'Data Saved',
+                    buttons: ['ok']
+                });
+                this.events.publish('refreshInventoryOrder', this.serverData.item.orders); 
+                this.events.publish('refreshInventoryItem', {
+                    quantity: this.serverData.item.quantity,
+                    totalPrice: this.serverData.item.totalPrice,
+                    totalPayment: this.serverData.item.totalPayment
+                }); 
+                dataEditAlert.present();
+            } else {
+                var dataEditFailureAlert = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Data Not Saved',
+                    buttons: ['ok']
+                });
+                dataEditFailureAlert.present();
+            }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });             
+            this.navCtrl.pop();
+        }, error => {
+           this.navCtrl.setRoot(LoginPage);
+           this.message = error.message;
+      }); 
   }
 
   completeOrder(order){
-  	  var newOrders = [];
-	  this.selectedItem.orders
-	  	.map((o) => {
-	  		if(o.orderId == order.orderId){
-	  			o.orderStatus = 'Complete';
-	  			o.updatedBy = this.userId;
-	  			o.updateDate = new Date();
-	  		}
-	  		newOrders[newOrders.length] = o;
-	  		return o;
-	  	});
-	  this.selectedItem.orders = newOrders;
+    if(!this.isLocked){
+      this.isLocked = true;    
+      this.notificationData.key = 'task_inventory_approval_request';
+      this.notificationData.subject = 'Order Approval Request';
+      this.notificationData.message = 'Order Approval Request \r\n Order Created By:' + this.userId + '\r\n Site:' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Order Id:' + order.orderId + '\r\n Ordered Item:' + order.item + '\r\n Total Items:' + order.quantity + '\r\n Total Price:' + order.currency + ' ' + order.totalPrice;
+      this.completeData(order);  
+    }
+  }
 
-      var newInventry = [];
-      this.selectedTaskData.inventory
-      	.map((elem) => {
-      	  if(elem.item == this.selectedItem.item){
-      	  		elem.orders = this.selectedItem.orders;
-      	  }
-      	  newInventry[newInventry.length] = elem;
-		  return elem;
-	  });
-      this.selectedTaskData.inventory = newInventry;
-    this.notificationData.key = 'task_inventory_approval_request';
-    this.notificationData.subject = 'Order Approval Request';
-    this.notificationData.message = 'Order Approval Request \r\n Order Created By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Order Id:' + order.orderId + '\r\n Ordered Item:' + order.item + '\r\n Total Items:' + order.quantity + '\r\n Total Price:' + order.currency + ' ' + order.totalPrice;
-	  this.saveData();	
+  approveOrder(order){
+    if(!this.isLocked){
+      this.isLocked = true;
+      this.notificationData.key = 'task_inventory_approval_info';
+      this.notificationData.subject = 'Order Approved Notification';
+      this.notificationData.message = 'Order Approved \r\n Order Approved By:' + this.userId + '\r\n Site:' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Order Id:' + order.orderId + '\r\n Ordered Item:' + order.item + '\r\n Total Items:' + order.quantity + '\r\n Total Price:' + order.currency + ' ' + order.totalPrice;
+  	  this.approveData(order);
+    }	
+
+  }
+
+  savePaymentData(order, paymentData){
+      this.authservice.payinventoryorder(this.selectedItem.item, order.orderId, paymentData, this.selectedSite, this.selectedTask, this.notificationData).then(
+        data => {
+            this.serverData = data;
+            if(this.serverData.operation && !this.serverData.dispute) {
+                let paymentEditAlert = this.alertCtrl.create({
+                    title: 'Success',
+                    subTitle: 'Data Saved',
+                    buttons: ['ok']
+                });
+                this.events.publish('refreshInventoryOrder', this.serverData.item.orders); 
+                this.events.publish('refreshInventoryItem', {
+                    quantity: this.serverData.item.quantity,
+                    totalPrice: this.serverData.item.totalPrice,
+                    totalPayment: this.serverData.item.totalPayment
+                }); 
+                paymentEditAlert.present();
+            } else if(this.serverData.operation && this.serverData.dispute) {
+                var peymentEditFailureAlert = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Payment coyld not be processed. Some one already processed a payment towards the selected Order. Kindly refresh to see latest payment ballances',
+                    buttons: ['ok']
+                });
+                peymentEditFailureAlert.present();
+            } else {
+                var peymentEditFailureAlert_2 = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Data Not Saved',
+                    buttons: ['ok']
+                });
+                peymentEditFailureAlert_2.present();
+            }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });             
+            this.navCtrl.pop();
+        }, error => {
+           this.navCtrl.setRoot(LoginPage);
+           this.message = error.message;
+      }); 
   }
 
   payBill(selectedOrder){
     if(!this.isLocked){
       this.isLocked = true;
-      var newInventory = [];
+      let paymentData = {
+        paymentId: '',
+        paidAmount: 0
+      };
       this.selectedTaskData.inventory
           .map((elem) => {
           for (var i in elem.orders) {
               if(elem.orders[i].orderId == selectedOrder.orderId){
                   if(elem.orders[i].totalPrice >= Number(selectedOrder.paidAmount) && 
                     (Number(elem.orders[i].totalPrice) - Number(selectedOrder.ballance)) >= 0){
-                    elem.orders[i].payments.push({
-                        paymentId: this.getRandomInt(10000000000, 99999999999),
-                        payment: Number(selectedOrder.paidAmount),
-                        paidBy: this.userId,
-                        paymentDate: new Date()
-                    });
-                    elem.orders[i].totalPayment = Number(elem.orders[i].totalPayment) + Number(selectedOrder.paidAmount);
-                    elem.totalPayment = Number(elem.totalPayment) + Number(selectedOrder.paidAmount);
+                      //Payment OK
+                      paymentData.paymentId = this.getRandomInt(10000000000, 99999999999);
+                      paymentData.paidAmount = Number(selectedOrder.paidAmount);
                   } else {
                     selectedOrder.paidAmount = 0;
                     let invalidPaymentAlert = this.alertCtrl.create({
@@ -244,20 +309,19 @@ export class SiteInventoryOrdersPage {
                     invalidPaymentAlert.present();
                     return;
                   }
+                  return;
               }
           }
-          newInventory[newInventory.length] = elem;
           return elem;
       });
       if(Number(selectedOrder.paidAmount) > 0 ){
-          this.selectedTaskData.inventory = newInventory;
           selectedOrder.paidAmount = 0;
 
           this.notificationData.key = 'task_inventory_order_payment_info';
           this.notificationData.subject = 'Order Bill Payment Notification';
-          this.notificationData.message = 'Order Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Order Id:' + selectedOrder.orderId + '\r\n Ordered Item:' + selectedOrder.item + '\r\n Total Price:' + selectedOrder.currency + ' ' + selectedOrder.totalPrice + '\n\r Paid Amount:' + selectedOrder.currency + ' ' + selectedOrder.paidAmount + '\r\n Remaining Amount:' + selectedOrder.currency + ' ' + selectedOrder.ballance;
+          this.notificationData.message = 'Order Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site:' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Order Id:' + selectedOrder.orderId + '\r\n Ordered Item:' + selectedOrder.item + '\r\n Total Price:' + selectedOrder.currency + ' ' + selectedOrder.totalPrice + '\n\r Paid Amount:' + selectedOrder.currency + ' ' + selectedOrder.paidAmount + '\r\n Remaining Amount:' + selectedOrder.currency + ' ' + selectedOrder.ballance;
 
-          this.saveData();
+          this.savePaymentData(selectedOrder, paymentData);
       } else this.isLocked = false;   
     }
   }

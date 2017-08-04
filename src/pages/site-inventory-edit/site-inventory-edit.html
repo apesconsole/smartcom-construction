@@ -9,26 +9,45 @@
 
 
 <ion-content>
-
-  <ion-item-group *ngIf="availableGblConfig.length > 0">
-      <ion-item-divider color="primary">Available Global Inventory</ion-item-divider>
-      <ion-row color="light" *ngFor="let item of availableGblConfig">
-          <ion-col center text-center>
-          	<ion-note>{{item.item}}</ion-note>
-          </ion-col>
-          <ion-col center text-center>
-            <ion-note>{{item.quantity}} {{item.uom}}</ion-note>
-          </ion-col>
-          <ion-col center text-center>
-            <ion-note>At Site: {{item.currentLocation}}</ion-note>
-          </ion-col> 
-          <ion-col>         
-          	<button item-end color="secondary" ion-button icon-left clear small (click)="selectGlobalItem(item)"> Select </button>
-          </ion-col>
-      </ion-row> 
+  <ion-item-group>
+    <ion-item-divider color="primary">
+    	INVENTORY | Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+    </ion-item-divider>
+	<ion-item color="light">
+  		<ion-label>
+  			<span class="_item_detail">{{selectedItem.item}}</span>
+  		</ion-label>
+  		<ion-label>
+  			<span class="_item_detail">{{selectedItem.quantity}} {{selectedItem.uom}}</span>
+  		</ion-label>
+  	</ion-item>	
+	<ion-item>
+		<button color="primary" ion-button *ngIf="!selectedItem.approved" (click)="approveField()"> Approve </button>
+		<button color="light" ion-button *ngIf="!canCreateNewOrder"> Create Order </button> 
+		<button color="primary" ion-button *ngIf="canCreateNewOrder && canCreateOrder()"(click)="createOrder()"> Create Order </button> 
+		<button color="primary" ion-button *ngIf="viewFinance() && canCreateOrder()" (click)="manageOrders()"> Manage Orders </button>  
+	</ion-item>
   </ion-item-group>
 
-  <ion-item-group *ngIf="gblConfig.item != ''">
+  <ion-item-group *ngIf="availableGblConfig.length > 0 && selectedItem.approved">
+      <ion-item-divider color="primary">Available Global Inventory</ion-item-divider>
+      <ion-item color="light" *ngFor="let item of availableGblConfig">
+          <ion-label>
+          	<span class="_item_detail">{{item.item}}</span>
+          </ion-label>
+          <ion-label>
+            <span class="_item_detail">{{item.quantity}} {{item.uom}}</span>
+          </ion-label>
+          <ion-label>
+            <span class="_item_detail">At Site: {{item.currentLocation}}</span>
+          </ion-label> 
+           
+          <button *ngIf="!canCreateNewOrder" item-end color="light" ion-button clear small> Select </button>       
+          <button *ngIf="canCreateNewOrder && selectedItem.approved" item-end color="primary" ion-button clear small (click)="selectGlobalItem(item)"> Select </button>
+      </ion-item> 
+  </ion-item-group>
+
+  <ion-item-group *ngIf="gblConfig.item != '' && canCreateNewOrder">
     <ion-item-divider color="primary">Global Item Request</ion-item-divider>
 	<ion-item color="light">
 		  <ion-label>Item</ion-label>
@@ -81,52 +100,24 @@
 	</ion-item>
   </ion-item-group>
 
-  <ion-item-group *ngIf="!canRequest && canCreateNewOrder">
+  <ion-item-group *ngIf="!canRequest && canCreateNewOrder && pendingRequest.requestStatus != 'Complete' && pendingRequest.requestStatus != 'Cancelled'">
     <ion-item-divider color="primary">Pending Inventory Requests</ion-item-divider>
       	<ion-item color="light">
-      		<ion-label>{{pendingRequest.item}}</ion-label>
-      		<ion-label>{{pendingRequest.uom}}</ion-label>
-      		<ion-label>{{pendingRequest.quantity}}</ion-label>			  			
+      		<ion-label>
+      			<span class="_item_detail">{{pendingRequest.item}}</span>
+      		</ion-label>
+      		<ion-label>
+      			<span class="_item_detail">{{pendingRequest.quantity}} {{pendingRequest.uom}}</span>
+      		</ion-label>	
+      		<ion-label>
+      			<span class="_item_detail">{{pendingRequest.requestStatus}}</span>
+      		</ion-label>		  			
       	</ion-item>
       	<ion-item *ngIf="canApprove">
-	        <button color="primary" ion-button (click)="approveRequestData()">
-	        	Process Request
+	        <button color="primary" ion-button (click)="loadRequestData()">
+	        	Details
 	        </button>
       	</ion-item>
   </ion-item-group>
-  <ion-item-group>
-    <ion-item-divider color="primary">Selected Site : {{selectedSite}}, Selected Task : {{selectedTask}}</ion-item-divider>
-	<ion-item color="light">
-		  <ion-label>Item</ion-label>
-		  <ion-input
-		  	disabled="true" 
-			[(ngModel)] = "selectedItem.item" 
-			type="text"   
-			#item="ngModel">		
-		  </ion-input>
-	</ion-item>
-	<ion-item color="light">
-		  <ion-label>Quantity</ion-label>
-		  <ion-input 
-		  	disabled="true"
-			[(ngModel)] = "selectedItem.quantity" 
-			type="text"   
-			#quantity="ngModel">		
-		  </ion-input>
-	</ion-item>
-	<ion-item color="light">
-		  <ion-label>UOM</ion-label>
-		  <ion-input 
-		    disabled="true"
-			[(ngModel)] = "selectedItem.uom" 
-			type="text"   
-			#uom="ngModel">		
-		  </ion-input>
-	</ion-item>
-	<ion-item>
-		<button color="light" ion-button *ngIf="!canCreateNewOrder"> Create Order </button> 
-		<button color="primary" ion-button *ngIf="canCreateNewOrder && canCreateOrder()"(click)="createOrder()"> Create Order </button> 
-		<button color="primary" ion-button *ngIf="viewFinance() && canCreateOrder()" (click)="manageOrders()"> Manage Orders </button>  
-	</ion-item>
-  </ion-item-group>
+
 </ion-content>

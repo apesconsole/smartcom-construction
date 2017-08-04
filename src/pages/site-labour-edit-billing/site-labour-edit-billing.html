@@ -1,9 +1,3 @@
-<!--
-  Generated template for the SiteLabourEditBillingPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
@@ -15,16 +9,18 @@
 
 <ion-content>
   <ion-item-group>
-    <ion-item-divider color="primary">Selected Site : {{selectedSite}}, Task Id {{selectedTask}}</ion-item-divider>
+    <ion-item-divider color="primary">
+      Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+    </ion-item-divider>
 	<ion-item color="secondary">
       <ion-label>
-      	{{selectedLabour.labourId}}
+      	{{selectedLabour.labourDescription}}
       </ion-label>
       <ion-label>
         {{selectedLabour.contractor}}
       </ion-label>
       <ion-label>
-        {{selectedLabour.rate}}
+       {{selectedLabour.currency}} {{selectedLabour.rate}}  * {{selectedLabour.count}}
       </ion-label>      
       <ion-label *ngIf="selectedLabour.contractType == 'per_hour'">Hourly</ion-label>
       <ion-label *ngIf="selectedLabour.contractType == 'per_day'">Daily</ion-label>
@@ -107,7 +103,7 @@
   	<ion-item *ngIf="!bill.approved && canApproveBill()">
         	<button color="primary" ion-button (click)="updateBilling(bill)"> Update </button>  	
         	<button color="primary" ion-button (click)="approveBilling(bill)"> Approve </button>
-        	<button color="primary" ion-button (click)="removeBilling(bill)"> Delete </button>
+        	<button color="primary" ion-button (click)="deleteBilling(bill)"> Delete </button>
   	</ion-item> 
     <ion-item *ngIf="bill.approved && bill.billingAmount > bill.totalPayment && canPayBill()">
         <button item-end color="primary" ion-button (click)="payBill(bill)"> Pay </button>

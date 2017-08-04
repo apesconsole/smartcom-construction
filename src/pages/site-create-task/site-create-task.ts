@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Events } from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
@@ -24,8 +24,10 @@ export class SiteCreateTaskPage {
   	taskDescription: '', 
     currency: 'INR',
     estimatedCost: 0,
-    actualCost: 0,
-    totalPayment: 0,
+    actualInventoryCost: 0,
+    totalInventoryPayment: 0,
+    actualLabourCost: 0,
+    totalLabourPayment: 0,    
     totalLabour: 0,
     totalInventory: 0,
   	estimatedDays: 0, 
@@ -61,10 +63,10 @@ export class SiteCreateTaskPage {
   getRandomInt(min, max) {
   	var _min = Math.ceil(min);
   	var _max = Math.floor(max);
-  	return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+  	return 'TSKID' + String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
         this.userId = this.navParams.get('userId');
 	  this.selectedSiteData = this.navParams.get('selectedSiteData');
 	  this.isLocked = false;
@@ -80,7 +82,7 @@ export class SiteCreateTaskPage {
   }
 
   saveData(){
-      this.authservice.createtask(this.selectedSiteData, this.taskInventory, this.taskLabour, this.notificationData).then(
+      this.authservice.createtask(this.selectedSite, this.taskDetails, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -99,6 +101,7 @@ export class SiteCreateTaskPage {
                 dataEditFailureAlert.present();
                 this.isLocked = false;
             }
+            this.events.publish('refreshSiteData', this.selectedSite);
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -107,15 +110,15 @@ export class SiteCreateTaskPage {
   }
 
   messageBuilder(){
-    this.notificationData.subject = 'New Task Added at Site:' + this.selectedSite;
-    this.notificationData.message = 'New Task Added \r\n Site Id:' + this.selectedSite +'\r\n Task Id:' + this.taskDetails.taskId + '\r\n Task Description:' + this.taskDetails.taskDescription + '\r\n Created By:' + this.userId;
+      this.notificationData.subject = 'New Task Added at Site:' + this.selectedSite;
+      this.notificationData.message = 'New Task Added \r\n Site Id:' + this.selectedSite +'\r\n Task Id:' + this.taskDetails.taskId + '\r\n Task Description:' + this.taskDetails.taskDescription + '\r\n Created By:' + this.userId;
   }
 
   createTask(){
     if(!this.isLocked){
         this.isLocked = true;
         this.taskDetails.daysRemaining = this.taskDetails.estimatedDays;
-        this.selectedSiteData.taskList.push(this.taskDetails);
+        //this.selectedSiteData.taskList.push(this.taskDetails);
         //Notification Details
         this.messageBuilder();
   	    this.saveData();	

@@ -40,31 +40,45 @@
 		</ion-item>     
  </ion-item-group>
 
- <ion-list *ngIf="globalConfigData.requests.length > 0">
+ <ion-item-group *ngIf="globalConfigData.items.length > 0">
+    <ion-item-divider color="primary">
+      Global Inventory
+    </ion-item-divider>
+      <ion-item color="light" *ngFor="let item of globalConfigData.items">
+          <ion-label>
+            <span class="_item_detail">{{item.item}}</span>
+          </ion-label>
+          <ion-label>
+            <span class="_item_detail">{{item.quantity}} {{item.uom}}</span>
+          </ion-label>
+          <ion-label>
+            <span class="_item_detail">At Site: {{item.currentLocation}}</span>
+          </ion-label> 
+          <button item-end color="primary" ion-button clear small (click)="loadItemRequests(item.item)"> Requests </button>
+      </ion-item>      
+ </ion-item-group>
+
+ <ion-list *ngIf="itemRequests.length > 0">
     <ion-list-header color="primary">
       Item Requests
     </ion-list-header>
-    <ion-item-sliding *ngFor="let r of globalConfigData.requests">
+    <ion-item-sliding *ngFor="let r of itemRequests">
       <ion-item>
         <h2>{{r.item}}</h2>
-        <p>{{r.quantity}} {{r.uom}}</p>
-        <p>Requesting Site {{r.siteId}}</p>
+        <p *ngIf="r.requestStatus == 'Open'">Requested Quantity :{{r.quantity}} {{r.uom}}</p>
+        <p *ngIf="r.requestStatus != 'Open'">{{r.requestStatus}} Quantity :{{r.quantity}} {{r.uom}}</p>
+        <p>Requesting Site :{{r.siteId}}</p>
       </ion-item>
-      <ion-item-options>
-        <button *ngIf="r.transferOrder.transferOrderId == ''" ion-button color="primary" icon-start (click)="transferRequests()">
-          <ion-icon name="list-box"></ion-icon>
-            Create Transfer
-        </button>       
-        <button *ngIf="r.transferOrder.transferOrderId != ''" ion-button color="primary" icon-start (click)="transferRequests()">
+      <ion-item-options>      
+        <button ion-button color="primary" icon-start (click)="transferRequests(r)">
           <ion-icon name="list-box"></ion-icon>
             Manage Transfer
         </button> 
-        <button *ngIf="r.transferOrder.transferOrderId == ''" ion-button color="danger" icon-start (click)="rejectRequests(r)">
+        <button ion-button color="danger" icon-start (click)="rejectRequests(r)">
           <ion-icon name="close"></ion-icon>
             Reject
         </button>               
       </ion-item-options>      
     </ion-item-sliding>
  </ion-list>
-
 </ion-content>

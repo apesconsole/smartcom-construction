@@ -1,0 +1,84 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Inventory Request</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+	<ion-item-group>
+		<ion-item-divider color="primary">
+			Request Details / Site {{displayText.siteName}} / Task {{displayText.taskDescription}}
+		</ion-item-divider>
+		<ion-item color="light">
+			<ion-label>Request Id</ion-label>
+			<ion-label>{{pendingRequest.requestId}}</ion-label>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Request Status</ion-label>
+			<ion-label>{{pendingRequest.requestStatus}}</ion-label>
+		</ion-item>		
+		<ion-item color="light">
+			<ion-label>Requested Item</ion-label>
+			<ion-label>{{pendingRequest.item}}</ion-label>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Quantity</ion-label>
+			<ion-label>{{pendingRequest.quantity}} {{pendingRequest.uom}}</ion-label>
+		</ion-item>
+		<ion-item color="light" *ngIf="pendingRequest.transfer && !pendingRequest.rejected">
+			<ion-label>Transfer Order Id</ion-label>
+			<ion-label>{{pendingRequest.transferOrder.transferOrderId}}</ion-label>
+		</ion-item>
+		<ion-item color="light" *ngIf="pendingRequest.transfer && !pendingRequest.rejected">
+			<ion-label>Shipping Vendor</ion-label>
+			<ion-label>{{pendingRequest.transferOrder.shippingVendor}}</ion-label>
+		</ion-item>
+		<ion-item color="light" *ngIf="pendingRequest.transfer && !pendingRequest.rejected">
+			<ion-label>Shipping Type</ion-label>
+			<ion-label>{{pendingRequest.transferOrder.trackingId}}</ion-label>
+		</ion-item>		
+		<ion-item color="light" *ngIf="pendingRequest.transfer && !pendingRequest.rejected">
+			<ion-label>Tracking Id</ion-label>
+			<ion-label>{{pendingRequest.transferOrder.shippingType}}</ion-label>
+		</ion-item>
+		<ion-item color="light" *ngIf="pendingRequest.transfer && !pendingRequest.rejected">
+			<ion-label>Estimated Delivery (Days)</ion-label>
+			<ion-label>{{pendingRequest.transferOrder.estimatedDeliveryDays}}</ion-label>
+		</ion-item>		
+		<ion-item color="light" *ngIf="pendingRequest.transfer && !pendingRequest.rejected">
+			<ion-label>Shipping Cost</ion-label>
+			<ion-label>
+				{{pendingRequest.transferOrder.currency}} {{pendingRequest.transferOrder.shippingCost}}
+			</ion-label>
+		</ion-item>	
+		<ion-item *ngIf="pendingRequest.transfer">
+			<button *ngIf="pendingRequest.requestStatus == 'Rejected'" 
+				color="primary" 
+				ion-button
+				(click)="cancelRequest()"> 
+				Cancel 
+			</button>
+			<button *ngIf="pendingRequest.requestStatus == 'Shipped' && canReceive()" 
+				color="primary" 
+				ion-button
+				(click)="receiveRequest()"> 
+				Receive 
+			</button>
+			<button *ngIf="pendingRequest.requestStatus == 'Received' && canApprove()" 
+				color="primary" 
+				ion-button
+				(click)="approveRequest()"> 
+				Approve 
+			</button>			
+			<button *ngIf="pendingRequest.requestStatus == 'Approved' && canPay()" 
+				color="primary" 
+				ion-button
+				(click)="payRequest()"> 
+				Pay 
+			</button>			
+		</ion-item>													
+	</ion-item-group>
+</ion-content>

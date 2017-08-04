@@ -25,8 +25,15 @@ export class SiteEditTaskPage {
   	taskDescription: '', 
     currency: 'INR',
     estimatedCost: 0,
-    actualCost: 0,
-  	estimatedDays: '', 
+    
+    actualInventoryCost: 0,
+    totalInventoryPayment: 0,
+    actualLabourCost: 0,
+    totalLabourPayment: 0,    
+    totalLabour: 0,
+    totalInventory: 0,
+
+  	estimatedDays: 0, 
   	daysRemaining: '', 
   	taskStatus: 'Waiting',
   	createDate: Date,
@@ -67,24 +74,24 @@ export class SiteEditTaskPage {
     return viewFinance;
   }
 
-  saveData(){
-      this.authservice.edittask(this.selectedSiteData, this.taskDetails, this.notificationData).then(
+  updateTaskData(){
+      this.authservice.updatetask(this.taskDetails, this.selectedSite, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
-                let dataEditAlert = this.alertCtrl.create({
+                let taskUpdateAlert = this.alertCtrl.create({
                     title: 'Success',
                     subTitle: 'Data Saved',
                     buttons: ['ok']
                 });
-                dataEditAlert.present();
+                taskUpdateAlert.present();
             } else {
-                var dataEditFailureAlert = this.alertCtrl.create({
+                var taskUpdateFailureAlert = this.alertCtrl.create({
                     title: 'Failure',
                     subTitle: 'Data Not Saved',
                     buttons: ['ok']
                 });
-                dataEditFailureAlert.present();
+                taskUpdateFailureAlert.present();
             }
             this.navCtrl.pop();
             this.events.publish('refreshSiteData', this.selectedSite);
@@ -94,48 +101,51 @@ export class SiteEditTaskPage {
       }); 
   }
 
+  updateTaskStatus(){
+      this.authservice.updatetaskstatus(this.taskDetails, this.selectedSite, this.notificationData).then(
+        data => {
+            this.serverData = data;
+            if(this.serverData.operation) {
+                let taskUpdateAlert = this.alertCtrl.create({
+                    title: 'Success',
+                    subTitle: 'Data Saved',
+                    buttons: ['ok']
+                });
+                taskUpdateAlert.present();
+            } else {
+                var taskUpdateFailureAlert = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Data Not Saved',
+                    buttons: ['ok']
+                });
+                taskUpdateFailureAlert.present();
+            }
+            this.navCtrl.pop();
+            this.events.publish('refreshSiteData', this.selectedSite);
+        }, error => {
+           this.navCtrl.setRoot(LoginPage);
+           this.message = error.message;
+      }); 
+  }
 
   editTask(){
     if(!this.isLocked){
         this.isLocked = true;
-        var newTaskList = [];
-        this.selectedSiteData.taskList
-      	.map((task) => {
-      	  if(task.taskId == this.taskDetails.taskId){
-      	  	  task = this.taskDetails;
-      	  	  console.log('Changed -> ' + task.taskId);
-      	  }
-      	  newTaskList[newTaskList.length] = task;
-		  return task;
-	  	});
-      	this.selectedSiteData.taskList = newTaskList;
-        //Notification
+
         this.notificationData.subject = 'Task Updated at Site:' + this.selectedSite;
         this.notificationData.message = 'Task Updated. \r\n Site Id:' + this.selectedSite +'\r\n Task Id:' + this.taskDetails.taskId + '\r\n Task Description:' + this.taskDetails.taskDescription + '\r\n Updated By:' + this.userId;
-        this.saveData();
+        this.updateTaskData();
     } 
   }
 
   editTaskStatus(status){
     if(!this.isLocked){
         this.isLocked = true;
-        var newTaskList = [];
-        this.selectedSiteData.taskList
-      	.map((task) => {
-      	  if(task.taskId == this.taskDetails.taskId){
-      	  	  task.taskStatus = status;
-      	  	  task.updateDate = new Date();
-      	  	  task.updatedBy = this.userId;
-      	  	  console.log('Changed -> ' + task.taskId);
-      	  }
-      	  newTaskList[newTaskList.length] = task;
-		  return task;
-	  	});
-      	this.selectedSiteData.taskList = newTaskList;
+        this.taskDetails.taskStatus = status;
         //Notification
         this.notificationData.subject = 'Task Status Updated at Site:' + this.selectedSite;
         this.notificationData.message = 'Task Status Updated \r\n Site Id:' + this.selectedSite +'\r\n Task Id:' + this.taskDetails.taskId + '\r\n Task Status:' + this.taskDetails.taskStatus + '\r\n Updated By:' + this.userId;        
-        this.saveData();
+        this.updateTaskStatus();
     }
   }
 

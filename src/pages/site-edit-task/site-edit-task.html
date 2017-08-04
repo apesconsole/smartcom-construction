@@ -71,11 +71,20 @@
 		  <ion-label>Actual Cost</ion-label>
 		  <ion-input 
 		  	disabled="true"
-			[(ngModel)] = "taskDetails.actualCost" 
+			[(ngModel)] = "taskDetails.actualInventoryCost" 
 			type="text"   
-			#actualCost="ngModel">		
+			#actualInventoryCost="ngModel">		
 		  </ion-input>
-	</ion-item>		
+	</ion-item>	
+	<ion-item color="light" *ngIf="viewFinance(selectedSite)">
+		  <ion-label>Total Payments</ion-label>
+		  <ion-input 
+		  	disabled="true"
+			[(ngModel)] = "taskDetails.totalInventoryPayment" 
+			type="text"   
+			#totalInventoryPayment="ngModel">		
+		  </ion-input>
+	</ion-item>			
 	<ion-item color="light">
 		  <ion-label>Days Remaining</ion-label>
 		  <ion-input 

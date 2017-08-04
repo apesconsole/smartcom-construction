@@ -10,7 +10,9 @@
 
 <ion-content>
   <ion-item-group>
-      <ion-item-divider color="primary">Selected Site : {{selectedSite}}</ion-item-divider>
+      <ion-item-divider color="primary">
+      	Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+      </ion-item-divider>
       <ion-item color="light" *ngFor="let config of configData.items">
           <ion-label>
           	{{config.item}}

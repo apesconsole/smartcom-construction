@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Events} from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
@@ -52,6 +52,11 @@ export class SiteLabourAddPage {
     message: ''
   }
 
+  displayText = {
+    siteName: '',
+    taskDescription: ''
+  }
+
   contractTypeList = [
       {value: 'per_hour',  text: 'Hourly'},
       {value: 'per_day',   text: 'Daily' },
@@ -64,19 +69,20 @@ export class SiteLabourAddPage {
   getRandomInt(min, max) {
     var _min = Math.ceil(min);
     var _max = Math.floor(max);
-    return String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
+    return 'LBRID' + String(Math.floor(Math.random() * (_max - _min)) + _min); //The maximum is exclusive and the minimum is inclusive
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
      this.userId = this.navParams.get('userId');
 	   this.selectedTaskData = this.navParams.get('selectedTaskData');
+     this.displayText = this.navParams.get('displayText');
 	   this.selectedSite = this.selectedTaskData.siteId;
      this.selectedTask = this.selectedTaskData.taskId;
      this.labourData.labourId = this.getRandomInt(10000000000, 99999999999);
   }
 
   saveField(){
-      this.authservice.savesitelabour(this.selectedTaskData, this.notificationData).then(
+      this.authservice.addlabour(this.labourData, this.selectedSite, this.selectedTask, this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
@@ -94,6 +100,11 @@ export class SiteLabourAddPage {
                 });
                 dataEditFailureAlert.present();
             }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshLabourData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });            
             this.navCtrl.pop();
         }, error => {
            this.navCtrl.setRoot(LoginPage);
@@ -104,7 +115,6 @@ export class SiteLabourAddPage {
   addLabour(){
       if(!this.isLocked){
         this.isLocked = true;
-        this.selectedTaskData.labour.push(this.labourData);
         this.saveField();
       }    
   }

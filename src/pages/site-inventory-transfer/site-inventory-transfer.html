@@ -1,18 +1,114 @@
-<!--
-  Generated template for the SiteInventoryTransferPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>SiteInventoryTransfer</ion-title>
+    <ion-title>Global Inventory / Request</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+	<ion-item-group>
+		<ion-item-divider color="primary">
+			Request Details
+		</ion-item-divider>
+		<ion-item color="light">
+			<ion-label>Request Id</ion-label>
+			<ion-label>{{pendingRequest.requestId}}</ion-label>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Request Status</ion-label>
+			<ion-label>{{pendingRequest.requestStatus}}</ion-label>
+		</ion-item>		
+		<ion-item color="light">
+			<ion-label>Requested Item</ion-label>
+			<ion-label>{{pendingRequest.item}}</ion-label>
+		</ion-item>
+		<ion-item color="light">
+			<ion-label>Quantity</ion-label>
+			<ion-label *ngIf="pendingRequest.requestStatus != 'Open'">
+				{{pendingRequest.quantity}}
+			</ion-label>
+			<ion-input
+				*ngIf="pendingRequest.requestStatus == 'Open'" 
+				[(ngModel)] = "pendingRequest.quantity" 
+				type="text"   
+				#quantity="ngModel">		
+			</ion-input>
+		</ion-item>	
 
+		<ion-item color="light" *ngIf="pendingRequest.transfer && pendingRequest.requestStatus != 'Open'">
+			<ion-label>Transfer Order Id</ion-label>
+			<ion-label>{{pendingRequest.transferOrder.transferOrderId}}</ion-label>
+		</ion-item>
+		<ion-item color="light" *ngIf="pendingRequest.transfer && pendingRequest.requestStatus != 'Open'">
+			<ion-label>Shipping Vendor</ion-label>
+			<ion-label *ngIf="pendingRequest.requestStatus == 'Shipped' || pendingRequest.requestStatus == 'Received'">{{pendingRequest.transferOrder.shippingVendor}}</ion-label>
+			<ion-input
+				*ngIf="pendingRequest.requestStatus == 'Allocated'" 
+				[(ngModel)] = "pendingRequest.transferOrder.shippingVendor" 
+				type="text"   
+				#shippingVendor="ngModel">		
+			</ion-input>
+		</ion-item>	
+		<ion-item color="light" *ngIf="pendingRequest.transfer && pendingRequest.requestStatus != 'Open'">
+			<ion-label>Shipping Type</ion-label>
+			<ion-label *ngIf="pendingRequest.requestStatus == 'Shipped' || pendingRequest.requestStatus == 'Received'">{{pendingRequest.transferOrder.shippingType}}</ion-label>
+			<ion-select 
+				*ngIf="pendingRequest.requestStatus == 'Allocated'" 
+				 [(ngModel)] = "pendingRequest.shippingType" 
+				 #shippingType="ngModel">
+				 <ion-option 
+				 	*ngFor="let shippingType of shippingTypeList" 
+				 	value='{{shippingType.value}}'>
+				 		{{shippingType.text}}
+				 </ion-option>
+			</ion-select>	
+		</ion-item>
+		<ion-item color="light" *ngIf="pendingRequest.transfer && pendingRequest.requestStatus != 'Open'">
+			<ion-label>Tracking Number</ion-label> 
+			<ion-label *ngIf="pendingRequest.requestStatus == 'Shipped' || pendingRequest.requestStatus == 'Received'">{{pendingRequest.transferOrder.trackingId}}</ion-label>			
+			<ion-input
+				*ngIf="pendingRequest.requestStatus == 'Allocated'" 
+				[(ngModel)] = "pendingRequest.transferOrder.trackingId" 
+				type="text"   
+				#trackingId="ngModel">		
+			</ion-input>
+		</ion-item>			
+		<ion-item color="light" *ngIf="pendingRequest.transfer && pendingRequest.requestStatus != 'Open'">
+			<ion-label>Shipping Cost {{pendingRequest.transferOrder.currency}}</ion-label> 
+			<ion-label *ngIf="pendingRequest.requestStatus == 'Shipped' || pendingRequest.requestStatus == 'Received'">{{pendingRequest.transferOrder.shippingCost}}</ion-label>				
+			<ion-input
+				*ngIf="pendingRequest.requestStatus == 'Allocated'" 
+				[(ngModel)] = "pendingRequest.transferOrder.shippingCost" 
+				type="text"   
+				#shippingCost="ngModel">		
+			</ion-input>
+		</ion-item>	
+		<ion-item color="light" *ngIf="pendingRequest.transfer && pendingRequest.requestStatus != 'Open'">
+			<ion-label>Estimated Delivery (Days)</ion-label>
+			<ion-label *ngIf="pendingRequest.requestStatus == 'Shipped' || pendingRequest.requestStatus == 'Received'">{{pendingRequest.transferOrder.estimatedDeliveryDays}}</ion-label>			
+			<ion-input
+				*ngIf="pendingRequest.requestStatus == 'Allocated'" 
+				[(ngModel)] = "pendingRequest.transferOrder.estimatedDeliveryDays" 
+				type="text"   
+				#estimatedDeliveryDays="ngModel">		
+			</ion-input>
+		</ion-item>
+		
+		<ion-item *ngIf="pendingRequest.transfer">
+			<button *ngIf="pendingRequest.requestStatus == 'Open'" 
+				color="primary" 
+				ion-button
+				(click)="approveRequest()"> 
+				Allocate 
+			</button>	
+			<button *ngIf="pendingRequest.requestStatus == 'Allocated'" 
+				color="primary" 
+				ion-button
+				(click)="shipRequest()"> 
+				Ship 
+			</button>					
+		</ion-item>																
+	</ion-item-group>
 </ion-content>
