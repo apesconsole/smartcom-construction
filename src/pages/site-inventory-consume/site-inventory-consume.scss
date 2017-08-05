@@ -1,3 +1,24 @@
 page-site-inventory-consume {
-
+	._task_desc {
+		color: map-get($colors, primary);
+		font-size: 16px;
+		font-weight: bold;
+	}
+	._headersubtext {
+		color: map-get($colors, apelight);
+		font-size: 12px;
+	}
+	._task_header {
+		color: map-get($colors, dark);
+		font-size: 14px;
+		font-weight: bold;
+	}
+	._task_data {
+		color: map-get($colors, apegrey);
+		font-size: 14px;
+	}
+	._item_detail {
+		font-size: 14px;
+		color: map-get($colors, apegrey);
+	}	
 }

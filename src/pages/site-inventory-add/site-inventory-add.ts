@@ -21,12 +21,7 @@ export class SiteInventoryAddPage {
     inventory: []
   };
   serverData: any;
-  configData = {
-  	configId: '',
-  	items: [],
-  	updateDate:'',
-  	updatedBy: ''
-  };
+  configData = [];
   selectedItem = {
   	item: '',
   	quantity: 0,
@@ -55,11 +50,24 @@ export class SiteInventoryAddPage {
 	    this.loadInventoryConfig();
   }
 
+  scanExistingInventory(_c){
+    let found = false
+    this.selectedTaskData.inventory
+      .map((_i)=>{
+        if(_i.item == _c.item && !found) found = true;
+        return _i;
+      });
+    return found;
+  }
+
   loadInventoryConfig(){
     this.authservice.getinventoryconfig().then(
     data => {
     	  this.serverData = data;
-        this.configData = this.serverData.data;
+        this.configData = this.serverData.data.items
+        .filter((_c)=>{
+            return !this.scanExistingInventory(_c);
+        });
     }, error => {
        this.navCtrl.setRoot(LoginPage);
        this.message = error.message;
@@ -87,7 +95,9 @@ export class SiteInventoryAddPage {
               "createdBy": this.userId,
               "approved": false,
               "approvedBy": '',
-              "approvalDate": ''
+              "approvalDate": '',
+              "releasedBy": '',
+              "releaseDate":''
           };
 
           this.authservice.addinventory(newInventory, this.selectedSite, this.selectedTask, this.notificationData).then(

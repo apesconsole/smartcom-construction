@@ -8,7 +8,15 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      refresher-icon-color="secondary"
+      refresher-text-color="secondary"
+      pullingIcon="arrow-dropdown"
+      pullingText="Refresh"
+      refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-card *ngIf="sites.length == 0">
     <ion-item color="light">
       <p>No Sites Have Tasks Yet</p>
@@ -20,73 +28,18 @@
     <ion-item color="primary">
       <ion-icon name="list" item-left large color="secondary"></ion-icon> 
       <span>Project: {{site.projectId}} / {{site.siteName}}</span>
-      <p>{{site.address}}</p>
+      <p class="_headersubtext">{{site.address}}</p>
     </ion-item>
     <br/>
     <ion-card-content>
       <h1 class="_header">Status</h1>
-      <ion-row>
-        <ion-col>
-          <div>
-            Completed : 
-          </div>
-        </ion-col>
-        <ion-col text-right>
-          <div>
-            {{site.taskMatrix.totalCompletedTasks}}
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <div>
-            Waiting : 
-          </div>
-        </ion-col>
-        <ion-col text-right>
-          <div>
-            {{site.taskMatrix.totalWaitingTasks}}
-          </div>
-        </ion-col>
-      </ion-row> 
-      <ion-row>
-        <ion-col>
-          <div>
-            On Hold : 
-          </div>
-        </ion-col>
-        <ion-col text-right>
-          <div>
-            {{site.taskMatrix.totalHeldTasks}}
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <div>
-            Running : 
-          </div>
-        </ion-col>
-        <ion-col text-right>
-          <div>
-            {{site.taskMatrix.totalRunningTasks}}
-          </div>
-        </ion-col>
-      </ion-row> 
-      <ion-row>
-        <ion-col>
-          <div>
-            Active Labours : 
-          </div>
-        </ion-col>
-        <ion-col text-right>
-          <div>
-            {{site.taskMatrix.totalLabour}}
-          </div>
-        </ion-col>
-      </ion-row>                         
+        <ion-badge color="apegrey">Waiting : {{site.taskMatrix.totalWaitingTasks}}</ion-badge>
+        <ion-badge color="apeprimary">Running : {{site.taskMatrix.totalRunningTasks}}</ion-badge>
+        <ion-badge color="apered">On Hold : {{site.taskMatrix.totalHeldTasks}}</ion-badge>
+        <ion-badge color="secondary">Completed : {{site.taskMatrix.totalCompletedTasks}} </ion-badge>  <br/>
+        <span class="_subtext">Active Labour : {{site.taskMatrix.totalLabour}}</span>               
     </ion-card-content>
-    <hr/>
+    <hr/>    
     <ion-card-content *ngIf="site.canViewFinance">
       <h1 class="_header">Financials ({{site.taskMatrix.currency}})</h1>   
       <ion-row>

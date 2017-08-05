@@ -125,11 +125,11 @@ export class SiteInventoryEditPage {
         this.selectedItem.totalPrice = Number(_itemData.totalPrice); 
         this.selectedItem.totalPayment = Number(_itemData.totalPayment); 
     });
-    this.events.subscribe('refreshInventoryRequest', (_requestData) => {
-        this.pendingRequest = _requestData;
-        if(Number(this.pendingRequest.transferOrder.payment) == Number(this.pendingRequest.transferOrder.shippingCost))
-           this.loadPendingRequest();
+    this.events.subscribe('refreshInventoryRequest', (_requests) => {
+        this.selectedItem.requests = _requests;
+        this.loadPendingRequest();
     });
+    console.log(this.selectedItem)
     this.loadPendingRequest();
   }
 
@@ -283,6 +283,38 @@ export class SiteInventoryEditPage {
       }); 
   }
 
+  releaseInventoryData(){
+      let _itemName = this.selectedItem.item;
+      this.authservice.releaseinventory(_itemName, this.selectedSite, this.selectedTask, this.notificationData).then(
+        data => {
+            this.serverData = data;
+            if(this.serverData.operation) {
+                let dataReleaseAlert = this.alertCtrl.create({
+                    title: 'Success',
+                    subTitle: 'Item Quantity Released. The Item will be available in Global Inventory.',
+                    buttons: ['ok']
+                });
+                dataReleaseAlert.present();
+            } else {
+                var dataReleaseFailureAlert = this.alertCtrl.create({
+                    title: 'Failure',
+                    subTitle: 'Data Not Saved',
+                    buttons: ['ok']
+                });
+                dataReleaseFailureAlert.present();
+            }
+            this.events.publish('refreshSiteData', this.selectedSite);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.selectedSite, 
+                taskId: this.selectedTask
+            });            
+            this.navCtrl.pop();
+        }, error => {
+           this.navCtrl.setRoot(LoginPage);
+           this.message = error.message;
+      }); 
+  }  
+
   loadRequestData(){
     this.navCtrl.push(SiteInventoryRequestsPage, {
         userId: this.userId,
@@ -293,6 +325,7 @@ export class SiteInventoryEditPage {
   }
 
   loadPendingRequest(){
+      this.canRequest = true;
       this.selectedItem.requests
         .map((request) => {
             if(request.requestStatus != 'Complete' && request.requestStatus != 'Cancelled'){
@@ -301,6 +334,7 @@ export class SiteInventoryEditPage {
             }
             return request;
         });
+        console.log(this.pendingRequest);
         if(this.canRequest) this.loadGlobalInventoryConfig();
   }
  
@@ -311,7 +345,7 @@ export class SiteInventoryEditPage {
           this.globalConfigData = this.serverGlobalData.data;
           this.globalConfigData.items
             .map((_i) => {
-                if(_i.item == this.selectedItem.item)
+                if(_i.item == this.selectedItem.item && Number(_i.quantity) > 0)
                   this.availableGblConfig.push(_i);
                 return _i;
             });
@@ -368,6 +402,13 @@ export class SiteInventoryEditPage {
           approvedBy: '',
           approvalDate: ''
       });
+    }
+  }
+
+  releaseItem(){
+    if(!this.isLocked){
+      this.isLocked = true;
+      this.releaseInventoryData();
     }
   }
 

@@ -78,8 +78,8 @@ export class SiteInventoryTransferPage {
         this.serverData = data;
         if(this.serverData.operation) {
             let requestAlert = this.alertCtrl.create({
-                title: 'Success',
-                subTitle: 'Request Approved',
+                title: 'Message',
+                subTitle: this.serverData.message,
                 buttons: ['ok']
             });
             this.events.publish('refreshGlobalInventoryRequest', {

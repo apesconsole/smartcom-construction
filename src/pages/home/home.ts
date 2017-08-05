@@ -23,22 +23,28 @@ export class HomePage {
       this.userData = {};
       this.name = '';
       this.type = '';
-      this.getinfo();
+      this.getinfo(null);
   }
 
-  loadSiteMatrix(){
+  doRefresh(refresher) {
+    this.getinfo(function(){
+      refresher.complete();
+    });
+  }
+
+  loadSiteMatrix(callBack){
       this.authservice.constructionsitematrix().then(
         data => {
             this.siteData = data;
-            this.sites = this.siteData.data;          
+            this.sites = this.siteData.data; 
+            if(null != callBack) callBack();       
         }, error => {
             this.navCtrl.setRoot(LoginPage);
             this.message = error.message;
       });
   }
 
-  getinfo() {
-
+  getinfo(callBack) {
       this.authservice.getinfo().then(
       data => {
           this.userData = data;
@@ -46,7 +52,7 @@ export class HomePage {
           this.type = this.userData.data.type;
           this.pages = this.userData.menu;
           this.events.publish('loadmenu', this.pages);
-          this.loadSiteMatrix();
+          this.loadSiteMatrix(callBack);
     	}, 
       error => {
           this.navCtrl.setRoot(LoginPage, {

@@ -13,17 +13,17 @@
       <ion-item-divider color="primary">
       	Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
       </ion-item-divider>
-      <ion-item color="light" *ngFor="let config of configData.items">
+      <ion-item color="light" *ngFor="let config of configData">
           <ion-label>
-          	{{config.item}}
+          	<span class="_item_detail">{{config.item}}</span>
           </ion-label>
           <ion-label>
-            {{config.dimension}}
+            <span class="_item_detail">{{config.dimension}}</span>
           </ion-label>
           <ion-label>
-            {{config.uom}}
+            <span class="_item_detail">{{config.uom}}</span>
           </ion-label>
-          <button item-end color="secondary" ion-button (click)="selectconfig(config)"> Select </button>
+          <button item-end color="primary" ion-button clear small (click)="selectconfig(config)"> Select </button>
       </ion-item> 
   </ion-item-group>
   <ion-item-group>

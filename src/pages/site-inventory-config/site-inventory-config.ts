@@ -88,8 +88,6 @@ export class SiteInventoryConfigPage {
       this.loadGlobalInventoryConfig(); 
 
       this.events.subscribe('refreshGlobalInventoryRequest', (requestData) =>{
-          console.log('Items = ' + requestData._items);
-          console.log('Requests = ' + requestData._requests);
           this.globalConfigData.items = requestData._items;
           this.globalConfigData.requests = requestData._requests;
           this.loadItemRequests(requestData._request.item);
@@ -236,7 +234,6 @@ export class SiteInventoryConfigPage {
         permission: this.permission     
     });
   }
-
 
   ionViewDidLoad() {
       console.log('ionViewDidLoad SiteInventoryConfigPage');

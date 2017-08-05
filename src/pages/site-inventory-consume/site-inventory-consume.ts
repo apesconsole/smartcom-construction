@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, MenuController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, MenuController, NavParams, Events } from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
@@ -24,6 +24,7 @@ export class SiteInventoryConsumePage {
   siteInventoryData: any;
   selectedSiteData = {
     siteId:'',
+    siteName: '',
     taskList: []
   }
   selectedTaskData = {
@@ -34,18 +35,28 @@ export class SiteInventoryConsumePage {
   inventory = [];
   permission = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private menu: MenuController, public authservice: AuthService) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private menu: MenuController, public authservice: AuthService, public events: Events) {
       this.userData = authservice.getDisplayinfo();
-      this.loadSiteInfo();
+      this.loadSiteInfo(null);
+      this.events.subscribe('refreshInventoryConsumption', (_itemData) => {
+          this.loadInventoryDetail(this.selectedTask);
+      });
   }
 
-  loadSiteInfo(){
+  doRefresh(refresher) {
+    this.loadSiteInfo(function(){
+      refresher.complete();
+    });
+  }
+
+  loadSiteInfo(refresherCallBak){
     this.selectedSite = '';
     this.selectedTask = '';  
     this.displayTask = false;
     this.displayInventroy = false;    
     this.authservice.constructionsites().then(
     data => {
+        if(null != refresherCallBak) refresherCallBak();
         this.siteData = data;
         this.sites = this.siteData.data;
         this.permission = this.siteData.permission;
@@ -63,10 +74,9 @@ export class SiteInventoryConsumePage {
     this.tasks = this.selectedSiteData.taskList;
   } 
 
-  loadInventoryDetail(task){
-    this.selectedTask = task.taskId;
+  loadInventoryDetail(taskId){
+    this.selectedTask = taskId;
     this.displayInventroy = true;
-    console.log(this.selectedSiteData.siteId + ', ' + this.selectedTask)
     this.authservice.siteinventory(this.selectedSiteData.siteId, this.selectedTask).then(
     data => {
         this.siteInventoryData = data;

@@ -37,18 +37,25 @@ export class SiteInventoryPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, private menu: MenuController, public authservice: AuthService, public events: Events) {
       this.events.unsubscribe('refreshSiteData');
     	this.userData = authservice.getDisplayinfo();
-      this.loadSiteInfo(null);
+      this.loadSiteInfo(null, null);
       this.events.subscribe('refreshSiteData', (defaultSite) => {
-          this.loadSiteInfo(defaultSite);
+          this.loadSiteInfo(defaultSite, null);
       });
   }
 
-  loadSiteInfo(defaultSite){
+  doRefresh(refresher) {
+    this.loadSiteInfo(null, function(){
+      refresher.complete();
+    });
+  }
+
+  loadSiteInfo(defaultSite, refresherCallBak){
     this.selectedSite = '';
     this.selectedTask = '';
     this.displayTask = false;
     this.authservice.constructionsites().then(
     data => {
+        if(null != refresherCallBak) refresherCallBak();
         this.siteData = data;
         this.permission = this.siteData.permission;
         this.sites = this.siteData.data;

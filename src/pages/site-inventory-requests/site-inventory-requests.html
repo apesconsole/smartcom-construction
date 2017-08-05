@@ -70,7 +70,7 @@
 			<button *ngIf="pendingRequest.requestStatus == 'Received' && canApprove()" 
 				color="primary" 
 				ion-button
-				(click)="approveRequest()"> 
+				(click)="approveRequest('Approved')"> 
 				Approve 
 			</button>			
 			<button *ngIf="pendingRequest.requestStatus == 'Approved' && canPay()" 
@@ -79,6 +79,14 @@
 				(click)="payRequest()"> 
 				Pay 
 			</button>			
-		</ion-item>													
+		</ion-item>	
+		<ion-item *ngIf="!pendingRequest.transfer">
+			<button *ngIf="pendingRequest.requestStatus == 'Allocated' && canApprove()" 
+				color="primary" 
+				ion-button
+				(click)="approveRequest('Acquired')"> 
+				Acquire 
+			</button>
+		</ion-item>												
 	</ion-item-group>
 </ion-content>

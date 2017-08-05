@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Events } from 'ionic-angular';
 
 import { AuthService } from '../login/authservice';
 import { LoginPage } from '../login/login';
@@ -42,7 +42,7 @@ export class SiteInventoryConsumeItemPage {
     message: ''
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController){
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authservice: AuthService, public alertCtrl: AlertController, public events: Events){
       this.userId = this.navParams.get('userId');
 	    this.selectedTaskData = this.navParams.get('selectedTaskData');
 	    this.selectedSite = this.selectedTaskData.siteId;
@@ -64,29 +64,22 @@ export class SiteInventoryConsumeItemPage {
           wrongQuantityAlert.present();   
           return;
       } 
-      var newInventry = [];
-      this.selectedTaskData.inventory
-        .map((elem) => {
-          if(elem.item == this.selectedItem.item){
-              elem.quantity = this.selectedItem.quantity - this.consumptionDetails.quantity;
-              elem.consumption.push(this.consumptionDetails);
-          }
-          newInventry[newInventry.length] = elem;
-          return elem;
-      });
-      this.selectedTaskData.inventory = newInventry;
       this.saveData();
   }
 
   saveData(){
-      this.authservice.savesiteinventory(this.selectedTaskData, this.notificationData).then(
+      this.authservice.consumesiteinventory(this.selectedTaskData.siteId, this.selectedTaskData.taskId, this.consumptionDetails,this.notificationData).then(
         data => {
             this.serverData = data;
             if(this.serverData.operation) {
                 let dataEditAlert = this.alertCtrl.create({
-                    title: 'Success',
-                    subTitle: 'Data Saved',
+                    title: 'Information',
+                    subTitle: this.serverData.message,
                     buttons: ['ok']
+                });
+                this.selectedItem = this.serverData.item;
+                this.events.publish('refreshInventoryConsumption', {
+                    item: this.selectedItem
                 });
                 dataEditAlert.present();
             } else {

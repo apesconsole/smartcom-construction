@@ -112,7 +112,17 @@ export class SiteInventoryRequestsPage {
                 subTitle: 'Request Cancelled',
                 buttons: ['ok']
             });
-            this.events.publish('refreshInventoryRequest', this.serverData.request);
+            this.events.publish('refreshSiteData', this.pendingRequest.siteId);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.pendingRequest.siteId, 
+                taskId: this.pendingRequest.taskId
+            });  
+            this.events.publish('refreshInventoryItem', {
+                quantity: this.serverData.item.quantity,
+                totalPrice: this.serverData.item.totalPrice,
+                totalPayment: this.serverData.item.totalPayment
+            });           
+            this.events.publish('refreshInventoryRequest', this.serverData.item.requests);
             requestAlert.present();
         } else {
             var requestAlertFailureAlert = this.alertCtrl.create({
@@ -121,13 +131,7 @@ export class SiteInventoryRequestsPage {
                 buttons: ['ok']
             });
             requestAlertFailureAlert.present();
-        }
-        this.events.publish('refreshSiteData', this.pendingRequest.siteId);
-        this.events.publish('refreshInventoryItem', this.serverData.item);
-        this.events.publish('refreshInventoryData', {
-            siteId: this.pendingRequest.siteId, 
-            taskId: this.pendingRequest.taskId
-        });              
+        }             
         this.navCtrl.pop();
       }, error => {
        this.navCtrl.setRoot(LoginPage);
@@ -145,8 +149,17 @@ export class SiteInventoryRequestsPage {
                 subTitle: 'Items Received',
                 buttons: ['ok']
             });
-            this.events.publish('refreshInventoryRequest', this.serverData.request);
-            this.events.publish('refreshInventoryItem', this.serverData.item);
+            this.events.publish('refreshSiteData', this.pendingRequest.siteId);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.pendingRequest.siteId, 
+                taskId: this.pendingRequest.taskId
+            }); 
+            this.events.publish('refreshInventoryItem', {
+                quantity: this.serverData.item.quantity,
+                totalPrice: this.serverData.item.totalPrice,
+                totalPayment: this.serverData.item.totalPayment
+            });            
+            this.events.publish('refreshInventoryRequest', this.serverData.item.requests);
             requestAlert.present();
         } else {
             var requestAlertFailureAlert = this.alertCtrl.create({
@@ -155,12 +168,7 @@ export class SiteInventoryRequestsPage {
                 buttons: ['ok']
             });
             requestAlertFailureAlert.present();
-        }
-        this.events.publish('refreshSiteData', this.pendingRequest.siteId);
-        this.events.publish('refreshInventoryData', {
-            siteId: this.pendingRequest.siteId, 
-            taskId: this.pendingRequest.taskId
-        });              
+        }            
         this.navCtrl.pop();
       }, error => {
        this.navCtrl.setRoot(LoginPage);
@@ -168,18 +176,27 @@ export class SiteInventoryRequestsPage {
     });
   }
 
-  approveRequestData(){
+  approveRequestData(m){
     this.authservice.approveinventoryrequest(this.pendingRequest, this.notificationData).then(
       data => {
         this.serverData = data;
         if(this.serverData.operation) {
             let requestAlert = this.alertCtrl.create({
                 title: 'Success',
-                subTitle: 'Items Approved',
+                subTitle: 'Items ' + m,
                 buttons: ['ok']
             });
-            this.events.publish('refreshInventoryRequest', this.serverData.request);
-            this.events.publish('refreshInventoryItem', this.serverData.item);
+            this.events.publish('refreshSiteData', this.pendingRequest.siteId);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.pendingRequest.siteId,   
+                taskId: this.pendingRequest.taskId
+            });            
+            this.events.publish('refreshInventoryItem', {
+                quantity: this.serverData.item.quantity,
+                totalPrice: this.serverData.item.totalPrice,
+                totalPayment: this.serverData.item.totalPayment
+            });
+            this.events.publish('refreshInventoryRequest', this.serverData.item.requests);
             requestAlert.present();
         } else {
             var requestAlertFailureAlert = this.alertCtrl.create({
@@ -189,11 +206,7 @@ export class SiteInventoryRequestsPage {
             });
             requestAlertFailureAlert.present();
         }
-        this.events.publish('refreshSiteData', this.pendingRequest.siteId);
-        this.events.publish('refreshInventoryData', {
-            siteId: this.pendingRequest.siteId, 
-            taskId: this.pendingRequest.taskId
-        });              
+              
         this.navCtrl.pop();
       }, error => {
        this.navCtrl.setRoot(LoginPage);
@@ -211,8 +224,17 @@ export class SiteInventoryRequestsPage {
                 subTitle: 'Payment Saved',
                 buttons: ['ok']
             });
-            this.events.publish('refreshInventoryRequest', this.serverData.request);
-            this.events.publish('refreshInventoryItem', this.serverData.item);
+            this.events.publish('refreshSiteData', this.pendingRequest.siteId);
+            this.events.publish('refreshInventoryData', {
+                siteId: this.pendingRequest.siteId, 
+                taskId: this.pendingRequest.taskId
+            });          
+            this.events.publish('refreshInventoryItem', {
+                quantity: this.serverData.item.quantity,
+                totalPrice: this.serverData.item.totalPrice,
+                totalPayment: this.serverData.item.totalPayment
+            });   
+            this.events.publish('refreshInventoryRequest', this.serverData.item.requests);
             requestAlert.present();
         } else {
             var requestAlertFailureAlert = this.alertCtrl.create({
@@ -221,12 +243,7 @@ export class SiteInventoryRequestsPage {
                 buttons: ['ok']
             });
             requestAlertFailureAlert.present();
-        }
-        this.events.publish('refreshSiteData', this.pendingRequest.siteId);
-        this.events.publish('refreshInventoryData', {
-            siteId: this.pendingRequest.siteId, 
-            taskId: this.pendingRequest.taskId
-        });              
+        }             
         this.navCtrl.pop();
       }, error => {
        this.navCtrl.setRoot(LoginPage);
@@ -248,10 +265,10 @@ export class SiteInventoryRequestsPage {
     }   
   }
 
-  approveRequest(){
+  approveRequest(m){
     if(!this.isLocked){
       this.isLocked = true;
-      this.approveRequestData();
+      this.approveRequestData(m);
     }   
   }  
 

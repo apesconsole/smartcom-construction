@@ -9,6 +9,15 @@
 
 
 <ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      refresher-icon-color="secondary"
+      refresher-text-color="secondary"
+      pullingIcon="arrow-dropdown"
+      pullingText="Refresh"
+      refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-list>
     <ion-list-header color="primary">
       Active Sites
@@ -16,18 +25,13 @@
     <ion-item-sliding *ngFor="let site of sites">
       <ion-item>
         <ion-icon name="list" item-left large color="secondary"></ion-icon>
-        <h2>Project: {{site.projectId}}</h2>
-        <p>Site: {{site.siteName}}</p>
-        <p>{{site.address}}</p>
+        <h2>Project: {{site.projectId}} / {{site.siteName}}</h2>
+        <p class="_headersubtext">{{site.address}}</p>
       </ion-item>
       <ion-item-options>
-        <button ion-button color="apemoss" (click)="loadTasks(site)" icon-start>
+        <button ion-button color="secondary" (click)="loadTasks(site)" icon-start>
           <ion-icon name="list-box"></ion-icon>
           Load Tasks
-        </button>
-        <button ion-button color="secondary" (click)="loadSiteInfo(null)" icon-start>
-          <ion-icon name="refresh"></ion-icon>
-          Refresh Data
         </button>
       </ion-item-options>
     </ion-item-sliding>
@@ -51,11 +55,11 @@
         <p class="_task_data" *ngIf="viewFinance(selectedSite)">Paid: {{this.getTotalPayment(task)}}</p>   
       </ion-item>
       <ion-item-options>
-        <button ion-button color="apemoss" (click)="loadInventoryDetail(task)" icon-start>
+        <button ion-button color="primary" (click)="loadInventoryDetail(task)" icon-start>
           <ion-icon name="pricetag"></ion-icon>
            Load Inventory
         </button>
-        <button ion-button color="primary" (click)="loadLabourDetail(task)" icon-start>
+        <button ion-button color="apemoss" (click)="loadLabourDetail(task)" icon-start>
           <ion-icon name="contact"></ion-icon>
            Load Labour
         </button> 

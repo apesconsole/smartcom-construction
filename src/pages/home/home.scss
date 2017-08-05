@@ -1,7 +1,16 @@
 page-home {
 	._header {
-		color: map-get($colors, dark);
+		color: map-get($colors, primary);
 		font-size: 18px;
 		font-weight: bold;
 	}
+	._headersubtext {
+		color: map-get($colors, apelight);
+		font-size: 12px;
+	}	
+	._subtext {
+		color: map-get($colors, primary);
+		font-size: 12px;
+	}
+
 }

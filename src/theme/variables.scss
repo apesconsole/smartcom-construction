@@ -25,6 +25,7 @@ $app-direction: ltr;
 
 $background-color: #f9f9f9;
 
+
 // Named Color Variables
 // --------------------------------------------------
 // Named colors makes it easy to reuse colors on various components.
@@ -34,7 +35,7 @@ $background-color: #f9f9f9;
 // The "primary" color is the only required color in the map.
 
 $colors: (
-  //primary:    #488aff,
+  apeprimary: #488aff,
   primary:    #5e5e5e,  
   secondary:  #32db64,
   danger:     #f53d3d,
@@ -43,9 +44,11 @@ $colors: (
   apeyellow:  #F2E111,
   apemoss:    #8e8e8e,
   apegrey:    #7a7a7a,
-  apered:     #ed5136
+  apered:     #ed5136,
+  apelight:   #9b9b9b
 );
-
+$refresher-icon-color: map-get($colors, primary);
+$refresher-text-color: map-get($colors, primary);
 
 // App iOS Variables
 // --------------------------------------------------

@@ -25,7 +25,8 @@
 		<button color="primary" ion-button *ngIf="!selectedItem.approved" (click)="approveField()"> Approve </button>
 		<button color="light" ion-button *ngIf="!canCreateNewOrder"> Create Order </button> 
 		<button color="primary" ion-button *ngIf="canCreateNewOrder && canCreateOrder()"(click)="createOrder()"> Create Order </button> 
-		<button color="primary" ion-button *ngIf="viewFinance() && canCreateOrder()" (click)="manageOrders()"> Manage Orders </button>  
+		<button color="primary" ion-button *ngIf="viewFinance() && canCreateOrder()" (click)="manageOrders()"> Manage Orders </button> 
+		<button color="primary" ion-button *ngIf="selectedItem.approved && selectedItem.quantity > 0" (click)="releaseItem()"> Release Items</button>		 
 	</ion-item>
   </ion-item-group>
 

@@ -96,14 +96,14 @@
 			</ion-input>
 		</ion-item>
 		
-		<ion-item *ngIf="pendingRequest.transfer">
+		<ion-item>
 			<button *ngIf="pendingRequest.requestStatus == 'Open'" 
 				color="primary" 
 				ion-button
 				(click)="approveRequest()"> 
 				Allocate 
 			</button>	
-			<button *ngIf="pendingRequest.requestStatus == 'Allocated'" 
+			<button *ngIf="pendingRequest.transfer && pendingRequest.requestStatus == 'Allocated'" 
 				color="primary" 
 				ion-button
 				(click)="shipRequest()"> 

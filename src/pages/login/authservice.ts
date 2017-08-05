@@ -645,6 +645,30 @@ export class AuthService {
         });   
     }
 
+    releaseinventory(selectedItem, siteId, taskId, notificationData){
+        var postData = 'userId=' + this.userData.userId + '&siteId=' + siteId + '&taskId=' + taskId + '&selectedItem=' + selectedItem + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
+        
+        var headers = new Headers();
+        headers.append("Accept", 'application/json');
+        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
+
+        return new Promise((resolve, reject ) => {
+            this.loadUserCredentials();
+            this.http.post(this.serverUrl + '/api/releaseinventory', postData , {headers: headers})
+            .map(res => res.json())
+            .subscribe( data => {
+                if(data.success){
+                    this.serverDataSet = data;
+                    resolve(this.serverDataSet);
+                } else {
+                    reject(data);
+                }
+            }, error => {
+                reject({message: 'The Server is not reachable. Please contact Administrator.'});
+            });
+        });   
+    }    
+
     cancelinventoryrequest(requestData, notificationData){
         var postData = 'userId=' + this.userData.userId + '&requestData=' + JSON.stringify(requestData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
@@ -722,7 +746,6 @@ export class AuthService {
         });   
     }
 
-
     approveinventoryrequest(requestData, notificationData){
         var postData = 'userId=' + this.userData.userId + '&requestData=' + JSON.stringify(requestData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
@@ -736,11 +759,26 @@ export class AuthService {
             .map(res => res.json())
             .subscribe( data => {
                 if(data.success){
-                    this.reconsileinventory(requestData.siteId, requestData.taskId).then(
-                        _d =>{
-                            this.serverDataSet = data;
-                            resolve(this.serverDataSet);
-                        });
+                    if(!requestData.transfer){
+                        //Acquired
+                        this.deleteglobalrequestdetails(requestData).then(
+                            _d =>{
+                                this.reconsileinventory(requestData.siteId, requestData.taskId).then(
+                                    _d2 =>{
+                                        this.serverDataSet = data;
+                                        resolve(this.serverDataSet);
+                                    });
+                            }, _e =>{
+                                reject(data);
+                        });                        
+                    } else {
+                        //Approved
+                        this.reconsileinventory(requestData.siteId, requestData.taskId).then(
+                            _d =>{
+                                this.serverDataSet = data;
+                                resolve(this.serverDataSet);
+                            });
+                    }
                 } else {
                     reject(data);
                 }
@@ -970,9 +1008,8 @@ export class AuthService {
         }); 
     }
 
-    //Old Service
-    savesitelabour(siteData, notificationData) {
-        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
+    consumesiteinventory(siteId, taskId, consumptionData, notificationData){
+        var postData = 'userId=' + this.userData.userId + '&siteId=' + siteId + '&taskId=' + taskId + '&consumptionData=' + JSON.stringify(consumptionData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
         
         var headers = new Headers();
         headers.append("Accept", 'application/json');
@@ -980,7 +1017,7 @@ export class AuthService {
 
         return new Promise((resolve, reject ) => {
             this.loadUserCredentials();
-            this.http.post(this.serverUrl + '/api/savesitelabour', postData , {headers: headers})
+            this.http.post(this.serverUrl + '/api/consumesiteinventory', postData , {headers: headers})
             .map(res => res.json())
             .subscribe( data => {
                 if(data.success){
@@ -992,30 +1029,6 @@ export class AuthService {
             }, error => {
                 reject({message: 'The Server is not reachable. Please contact Administrator.'});
             });
-        }); 
-    }    
-
-    savesiteinventory(siteData, notificationData) {
-        var postData = 'userId=' + this.userData.userId + '&siteData=' + JSON.stringify(siteData) + '&notificationData=' + JSON.stringify(notificationData) + '&token=Bearer ' + this.AuthToken;
-        
-        var headers = new Headers();
-        headers.append("Accept", 'application/json');
-        headers.append('Content-Type', 'application/x-www-form-urlencoded' );
-
-        return new Promise((resolve, reject ) => {
-            this.loadUserCredentials();
-            this.http.post(this.serverUrl + '/api/savesiteinventory', postData , {headers: headers})
-            .map(res => res.json())
-            .subscribe( data => {
-                if(data.success){
-                    this.serverDataSet = data;
-                    resolve(this.serverDataSet);
-                } else {
-                    reject(data);
-                }
-            }, error => {
-                reject({message: 'The Server is not reachable. Please contact Administrator.'});
-            });
-        }); 
-    }      
+        });  
+    }     
 }

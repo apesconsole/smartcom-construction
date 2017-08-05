@@ -97,15 +97,15 @@
 		<button 
 			*ngIf="taskDetails.taskStatus == 'Hold' || taskDetails.taskStatus == 'Waiting'" 
 			color="primary" 
-			ion-button (click)="editTaskStatus('Started')"> Start 
+			ion-button (click)="editTaskStatus('Running')"> Start 
 		</button>
 		<button 
-			*ngIf="taskDetails.taskStatus == 'Started'" 
+			*ngIf="taskDetails.taskStatus == 'Running'" 
 			color="primary" 
 			ion-button (click)="editTaskStatus('Complete')"> Complete 
 		</button>
 		<button 
-			*ngIf="taskDetails.taskStatus == 'Started'" 
+			*ngIf="taskDetails.taskStatus == 'Running'" 
 			color="primary" 
 			ion-button (click)="editTaskStatus('Hold')"> Hold 
 		</button>

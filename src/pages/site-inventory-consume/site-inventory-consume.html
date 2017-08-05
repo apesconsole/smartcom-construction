@@ -9,24 +9,29 @@
 
 
 <ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      refresher-icon-color="secondary"
+      refresher-text-color="secondary"
+      pullingIcon="arrow-dropdown"
+      pullingText="Refresh"
+      refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-list>
     <ion-list-header color="primary">
       Active Sites
     </ion-list-header>
     <ion-item-sliding *ngFor="let site of sites">
       <ion-item>
-        <h2>Project: {{site.projectId}}</h2>
-        <p>Site: {{site.siteName}}</p>
-        <p>{{site.address}}</p>
+        <ion-icon name="list" item-left large color="secondary"></ion-icon>
+        <h2>Project: {{site.projectId}} / {{site.siteName}}</h2>
+        <p class="_headersubtext">{{site.address}}</p>
       </ion-item>
       <ion-item-options>
-        <button ion-button color="apemoss" (click)="loadTaskDetail(site)" icon-start>
+        <button ion-button color="secondary" (click)="loadTaskDetail(site)" icon-start>
           <ion-icon name="list-box"></ion-icon>
           Load Tasks
-        </button>
-        <button ion-button color="secondary" (click)="loadSiteInfo()" icon-start>
-          <ion-icon name="refresh"></ion-icon>
-          Refresh Data
         </button>
       </ion-item-options>
     </ion-item-sliding>
@@ -48,8 +53,8 @@
         <p>Paid: {{task.currency}} {{task.totalPayment}}</p>  
         <ion-note>{{task.taskStatus}}</ion-note>     
       </ion-item>
-      <ion-item-options *ngIf="task.taskStatus == 'Started'">
-        <button ion-button color="apemoss" (click)="loadInventoryDetail(task)" icon-start>
+      <ion-item-options *ngIf="task.taskStatus == 'Running'">
+        <button ion-button color="apemoss" (click)="loadInventoryDetail(task.taskId)" icon-start>
           <ion-icon name="pricetag"></ion-icon>
            Load Inventory
         </button>     
@@ -61,15 +66,12 @@
       <p *ngIf="inventory.length == 0">No Data Available</p>
       <ion-item color="light" *ngFor="let item of inventory">
           <ion-label>
-            {{item.item}}
+            <span class="_item_detail">{{item.item}}</span>
           </ion-label>
           <ion-label>
-            {{item.quantity}}
+            <span class="_item_detail">{{item.quantity}} {{item.uom}}</span>
           </ion-label>
-          <ion-label>
-            {{item.uom}}
-          </ion-label>
-          <button ion-button item-end color="secondary" (click)="consumeInventory(item)">Use Item</button>
+          <button item-end color="primary" ion-button clear small (click)="consumeInventory(item)">Use Item</button>
       </ion-item>
   </ion-item-group>
 </ion-content>
