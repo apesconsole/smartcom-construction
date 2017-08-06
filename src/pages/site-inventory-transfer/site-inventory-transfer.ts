@@ -83,9 +83,9 @@ export class SiteInventoryTransferPage {
                 buttons: ['ok']
             });
             this.events.publish('refreshGlobalInventoryRequest', {
-              _items: this.serverData._items,
-            	_requests: this.serverData._requests,
-            	_request: this.serverData._request
+                _items: this.serverData._items,
+              	_requests: this.serverData._requests,
+              	_request: this.serverData._request
             });
             requestAlert.present();
         } else {

@@ -328,6 +328,7 @@ export class SiteInventoryEditPage {
       this.canRequest = true;
       this.selectedItem.requests
         .map((request) => {
+            
             if(request.requestStatus != 'Complete' && request.requestStatus != 'Cancelled'){
                 this.pendingRequest = request;
                 this.canRequest = false;

@@ -9,10 +9,10 @@ export class AuthService {
     AuthToken;
     userData: any;
     serverUrl = 'http://localhost:3003';
-    
+    //serverUrl = 'https://smartcom-app-server.herokuapp.com';
     serverDataSet: any;
 
-    constructor(private http: Http, ) {
+    constructor(private http: Http) {
         this.http = http;
         this.isLoggedin = false;
         this.AuthToken = null;

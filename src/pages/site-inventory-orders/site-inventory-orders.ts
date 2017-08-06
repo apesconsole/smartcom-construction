@@ -53,7 +53,7 @@ export class SiteInventoryOrdersPage {
      approvedBy: '',
      approvalDate: '',
      paidAmount: 0,
-     ballance: 0,
+     balance: 0,
      estimatedDeliveryDays: 0
   }
 
@@ -259,7 +259,7 @@ export class SiteInventoryOrdersPage {
             } else if(this.serverData.operation && this.serverData.dispute) {
                 var peymentEditFailureAlert = this.alertCtrl.create({
                     title: 'Failure',
-                    subTitle: 'Payment coyld not be processed. Some one already processed a payment towards the selected Order. Kindly refresh to see latest payment ballances',
+                    subTitle: 'Payment coyld not be processed. Some one already processed a payment towards the selected Order. Kindly refresh to see latest payment balances',
                     buttons: ['ok']
                 });
                 peymentEditFailureAlert.present();
@@ -295,7 +295,7 @@ export class SiteInventoryOrdersPage {
           for (var i in elem.orders) {
               if(elem.orders[i].orderId == selectedOrder.orderId){
                   if(elem.orders[i].totalPrice >= Number(selectedOrder.paidAmount) && 
-                    (Number(elem.orders[i].totalPrice) - Number(selectedOrder.ballance)) >= 0){
+                    (Number(elem.orders[i].totalPrice) - Number(selectedOrder.balance)) >= 0){
                       //Payment OK
                       paymentData.paymentId = this.getRandomInt(10000000000, 99999999999);
                       paymentData.paidAmount = Number(selectedOrder.paidAmount);
@@ -319,15 +319,15 @@ export class SiteInventoryOrdersPage {
 
           this.notificationData.key = 'task_inventory_order_payment_info';
           this.notificationData.subject = 'Order Bill Payment Notification';
-          this.notificationData.message = 'Order Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site:' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Order Id:' + selectedOrder.orderId + '\r\n Ordered Item:' + selectedOrder.item + '\r\n Total Price:' + selectedOrder.currency + ' ' + selectedOrder.totalPrice + '\n\r Paid Amount:' + selectedOrder.currency + ' ' + selectedOrder.paidAmount + '\r\n Remaining Amount:' + selectedOrder.currency + ' ' + selectedOrder.ballance;
+          this.notificationData.message = 'Order Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site:' + this.displayText.siteName + '\r\n Task:' + this.displayText.taskDescription + '\r\n Order Id:' + selectedOrder.orderId + '\r\n Ordered Item:' + selectedOrder.item + '\r\n Total Price:' + selectedOrder.currency + ' ' + selectedOrder.totalPrice + '\n\r Paid Amount:' + selectedOrder.currency + ' ' + selectedOrder.paidAmount + '\r\n Remaining Amount:' + selectedOrder.currency + ' ' + selectedOrder.balance;
 
           this.savePaymentData(selectedOrder, paymentData);
       } else this.isLocked = false;   
     }
   }
 
-  setBallance(selectedOrder){
-    selectedOrder.ballance = Number(selectedOrder.totalPrice) - Number(selectedOrder.totalPayment) - Number(selectedOrder.paidAmount);
+  setBalance(selectedOrder){
+    selectedOrder.balance = Number(selectedOrder.totalPrice) - Number(selectedOrder.totalPayment) - Number(selectedOrder.paidAmount);
   }
 
   ionViewDidLoad() {

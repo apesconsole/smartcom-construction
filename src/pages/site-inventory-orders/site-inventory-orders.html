@@ -113,12 +113,12 @@
 	        </ion-input>
 	    </ion-item> 	
 	    <ion-item color="light" *ngIf="order.approved && order.totalPrice > order.totalPayment">
-	        <ion-label>Ballance {{order.currency}}</ion-label>
+	        <ion-label>Balance {{order.currency}}</ion-label>
 	        <ion-input 
 	        disabled=true
-	        [(ngModel)] = "order.ballance" 
+	        [(ngModel)] = "order.balance" 
 	        type="text"   
-	        #ballance="ngModel">   
+	        #balance="ngModel">   
 	        </ion-input>
 	    </ion-item>       
 	    <ion-item color="light" *ngIf="order.approved && order.totalPrice > order.totalPayment">
@@ -126,7 +126,7 @@
 	        <ion-input 
 	        [(ngModel)] = "order.paidAmount" 
 	        type="text"
-	        (change)="setBallance(order)"   
+	        (change)="setBalance(order)"   
 	        #paidAmount="ngModel">   
 	        </ion-input>
 	    </ion-item> 

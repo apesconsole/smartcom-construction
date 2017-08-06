@@ -55,7 +55,7 @@ export class SiteLabourEditBillingPage {
       approvedBy: '',
       approvalDate: '',
       approved: false,
-      ballance: 0,
+      balance: 0,
       paidAmount: 0
   }
 
@@ -218,7 +218,7 @@ export class SiteLabourEditBillingPage {
             } else if(this.serverData.operation && this.serverData.dispute) {
                 var peymentEditFailureAlert = this.alertCtrl.create({
                     title: 'Failure',
-                    subTitle: 'Payment coyld not be processed. Some one already processed a payment towards the selected Labour Bill. Kindly refresh to see latest payment ballances',
+                    subTitle: 'Payment coyld not be processed. Some one already processed a payment towards the selected Labour Bill. Kindly refresh to see latest payment balances',
                     buttons: ['ok']
                 });
                 peymentEditFailureAlert.present();
@@ -304,7 +304,7 @@ export class SiteLabourEditBillingPage {
               for (var i in elem.billing) {
                 if(elem.billing[i].billingId ==  selectedBill.billingId){
                   if(elem.billing[i].billingAmount >= Number(selectedBill.paidAmount) && 
-                    (Number(elem.billing[i].billingAmount) - Number(selectedBill.ballance)) >= 0){
+                    (Number(elem.billing[i].billingAmount) - Number(selectedBill.balance)) >= 0){
                     
                         paymentData.paymentId = this.getRandomInt(10000000000, 99999999999);
                         paymentData.paidAmount = Number(selectedBill.paidAmount);
@@ -330,15 +330,15 @@ export class SiteLabourEditBillingPage {
 
           this.notificationData.key = 'task_labour_bill_payment_info';
           this.notificationData.subject = 'Labour Bill Payment Notification';
-          this.notificationData.message = 'Labour Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour: ' + this.selectedLabour.labourDescription  + '\r\n Billing Id:' + selectedBill.billingId + '\r\n Total Bill:' + selectedBill.currency + ' ' + selectedBill.billingAmount + '\n\r Paid Amount:' + selectedBill.currency + ' ' + selectedBill.paidAmount + '\r\n Remaining Amount:' + selectedBill.currency + ' ' + selectedBill.ballance;
+          this.notificationData.message = 'Labour Bill Payment  \r\n Payment Updated By:' + this.userId + '\r\n Site Id:' + this.selectedSite + '\r\n Labour: ' + this.selectedLabour.labourDescription  + '\r\n Billing Id:' + selectedBill.billingId + '\r\n Total Bill:' + selectedBill.currency + ' ' + selectedBill.billingAmount + '\n\r Paid Amount:' + selectedBill.currency + ' ' + selectedBill.paidAmount + '\r\n Remaining Amount:' + selectedBill.currency + ' ' + selectedBill.balance;
 
           this.savePaymentData(selectedBill, paymentData);
       } else this.isLocked = false;   
     }
   }
 
-  setBallance(selectedBill){
-    selectedBill.ballance = Number(selectedBill.billingAmount) - Number(selectedBill.totalPayment) - Number(selectedBill.paidAmount);
+  setBalance(selectedBill){
+    selectedBill.balance = Number(selectedBill.billingAmount) - Number(selectedBill.totalPayment) - Number(selectedBill.paidAmount);
   }
   
   ionViewDidLoad() {
