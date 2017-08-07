@@ -11,7 +11,7 @@
 <ion-content>
   <ion-item-group>
     <ion-item-divider color="primary">
-    	Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+    	Site : {{displayText.siteName}} / Task : {{displayText.taskDescription}}
     </ion-item-divider>
 	<ion-item color="light">
 		  <ion-label>Labour Id</ion-label>
@@ -34,6 +34,7 @@
 	<ion-item color="light">
 		  <ion-label>Contractor</ion-label>
 		  <ion-input 
+		    disabled="{{selectedLabour.approved}}"
 			[(ngModel)] = "selectedLabour.contractor" 
 			type="text"   
 			#contractor="ngModel">		
@@ -41,7 +42,8 @@
 	</ion-item>	
 	<ion-item color="light">
 		  <ion-label>Contract Type</ion-label>
-		  <ion-select 
+		  <ion-select
+		  	 disabled="{{selectedLabour.approved}}"
 			 [(ngModel)] = "selectedLabour.contractType" 
 			 #contractType="ngModel">
 			 <ion-option 
@@ -54,6 +56,7 @@
 	<ion-item color="light">
 		  <ion-label>Rate</ion-label>
 		  <ion-input  
+		    disabled="{{selectedLabour.approved}}"
 			[(ngModel)] = "selectedLabour.rate" 
 			type="text"   
 			#rate="ngModel">		
@@ -71,6 +74,7 @@
 	<ion-item color="light">
 		  <ion-label>Count</ion-label>
 		  <ion-input 
+		  	disabled="{{selectedLabour.approved}}"
 			[(ngModel)] = "selectedLabour.count" 
 			type="text"   
 			#count="ngModel">		

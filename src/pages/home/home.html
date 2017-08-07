@@ -33,35 +33,44 @@
     <br/>
     <ion-card-content>
       <h1 class="_header">Status</h1>
-        <ion-badge color="apegrey">Waiting : {{site.taskMatrix.totalWaitingTasks}}</ion-badge>
-        <ion-badge color="apeprimary">Running : {{site.taskMatrix.totalRunningTasks}}</ion-badge>
-        <ion-badge color="apered">On Hold : {{site.taskMatrix.totalHeldTasks}}</ion-badge>
-        <ion-badge color="secondary">Completed : {{site.taskMatrix.totalCompletedTasks}} </ion-badge>  <br/>
-        <span class="_subtext">Active Labour : {{site.taskMatrix.totalLabour}}</span>               
+      <ion-badge color="apegrey">
+        Waiting : {{site.taskMatrix.totalWaitingTasks}}
+      </ion-badge>
+      <ion-badge color="apeprimary">
+        Running : {{site.taskMatrix.totalRunningTasks}}
+      </ion-badge>
+      <ion-badge color="apered">
+        On Hold : {{site.taskMatrix.totalHeldTasks}}
+      </ion-badge>
+      <ion-badge color="secondary">
+        Completed : {{site.taskMatrix.totalCompletedTasks}} 
+      </ion-badge>  
+      <br/>
+      <span class="_subtext">Active Labour : {{site.taskMatrix.totalLabour}}</span>           
     </ion-card-content>
     <hr/>    
     <ion-card-content *ngIf="site.canViewFinance">
       <h1 class="_header">Financials ({{site.taskMatrix.currency}})</h1>   
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Inventory Cost : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.actualInventoryCost}}
           </div>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Labour Cost : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.actualLabourCost}}
           </div>
         </ion-col>
@@ -69,24 +78,24 @@
       <hr/>        
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Total Cost : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.totalCost}}
           </div>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Total Payments : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.totalPayment}}
           </div>
         </ion-col>
@@ -94,36 +103,36 @@
       <hr/>
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Estimated Cost : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.totalEstimatedCost}}
           </div>
         </ion-col>
       </ion-row>            
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Deviation : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.deviation}}
           </div>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <div>
+          <div class="_text">
             Budget Balance : 
           </div>
         </ion-col>
         <ion-col text-right>
-          <div>
+          <div class="_text">
              {{site.taskMatrix.savings}}
           </div>
         </ion-col>

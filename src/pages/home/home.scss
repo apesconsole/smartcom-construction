@@ -12,5 +12,8 @@ page-home {
 		color: map-get($colors, primary);
 		font-size: 12px;
 	}
-
+	._text {
+		color: map-get($colors, primary);
+		font-size: 14px;
+	}
 }

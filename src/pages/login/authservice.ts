@@ -8,7 +8,7 @@ export class AuthService {
     isLoggedin: boolean;
     AuthToken;
     userData: any;
-    serverUrl = 'http://localhost:3003';
+    //serverUrl = 'http://localhost:3003';
     
     serverDataSet: any;
 
@@ -871,8 +871,16 @@ export class AuthService {
             .map(res => res.json())
             .subscribe( data => {
                 if(data.success){
-                    this.serverDataSet = data;
-                    resolve(this.serverDataSet);
+                    if(labourData.approved == true){
+                        this.reconsilelabour(siteId, taskId).then(
+                            _d =>{
+                                this.serverDataSet = data;
+                                resolve(this.serverDataSet);
+                            });
+                    } else {
+                        this.serverDataSet = data;
+                        resolve(this.serverDataSet);
+                    }
                 } else {
                     reject(data);
                 }

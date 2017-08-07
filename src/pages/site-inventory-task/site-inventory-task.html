@@ -11,7 +11,7 @@
 <ion-content>
   <ion-list *ngIf="displayInventroy">
       <ion-list-header color="primary">
-          Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+          Site : {{displayText.siteName}} / Task : {{displayText.taskDescription}}
       </ion-list-header>
       <ion-item *ngIf="inventory.length == 0">
         <p>No Data Available</p>
@@ -19,12 +19,12 @@
       <ion-item-sliding *ngFor="let item of inventory">
           <ion-item>
             <ion-icon name="pricetag" item-left large color="secondary"></ion-icon> 
-            <h2>{{item.item}}</h2>
-            <p>Quantity: {{item.quantity}}</p>
-            <p>Unit of Measure: {{item.uom}}</p>
+            <h2 class="_task_desc">{{item.item}}</h2>
+            <p class="_task_data">Quantity: {{item.quantity}}</p>
+            <p class="_task_data">Unit of Measure: {{item.uom}}</p>
             <span class="_task_header">Financials ({{currency}})</span>
-            <p *ngIf="viewFinance(selectedSite)">Total Price: {{item.totalPrice}}</p>
-            <p *ngIf="viewFinance(selectedSite)">Total Payment: {{item.totalPayment}}</p>            
+            <p class="_task_data" *ngIf="viewFinance(selectedSite)">Total Price: {{item.totalPrice}}</p>
+            <p class="_task_data" *ngIf="viewFinance(selectedSite)">Total Payment: {{item.totalPayment}}</p>            
           </ion-item>
           <ion-item-options>
               <button ion-button color="secondary" (click)="editinventory(item)" icon-start>
@@ -44,7 +44,7 @@
   </ion-list>
   <ion-list *ngIf="displayLabour">
       <ion-list-header color="primary">
-          Site : {{displayText.siteName}}, Task : {{displayText.taskDescription}}
+          Site : {{displayText.siteName}} / Task : {{displayText.taskDescription}}
       </ion-list-header>
       <ion-item *ngIf="labour.length == 0">
         <p>No Data Available</p>
@@ -52,16 +52,16 @@
       <ion-item-sliding *ngFor="let item of labour">
           <ion-item>
             <ion-icon name="contact" item-left large color="secondary"></ion-icon>
-            <h2>{{item.contractor}}</h2>
-            <p>{{item.labourDescription}}</p>
-            <p *ngIf="item.contractType == 'per_hour'">Hourly : {{item.currency}} {{item.rate}} </p>
-            <p *ngIf="item.contractType == 'per_day'">Daily : {{item.currency}} {{item.rate}} </p>
-            <p *ngIf="item.contractType == 'per_week'">Weekly : {{item.currency}} {{item.rate}} </p>
-            <p *ngIf="item.contractType == 'per_month'">Monthly : {{item.currency}} {{item.rate}} </p>
-            <p *ngIf="item.contractType == 'full_payout'">Full Payout : {{item.currency}} {{item.rate}} </p>
-            <p *ngIf="item.contractType == 'partial_payout'">Partial Payout : {{item.currency}} {{item.rate}} </p>
-            <p *ngIf="viewFinance(selectedSite)">Total Bill: {{item.totalBill}}</p>
-            <p *ngIf="viewFinance(selectedSite)">Total Payment: {{item.totalPayment}}</p>
+            <h2 class="_task_desc">{{item.labourDescription}}</h2>
+            <p class="_task_data">{{item.contractor}}</p>
+            <p class="_task_data" *ngIf="item.contractType == 'per_hour'">Hourly : {{item.currency}} {{item.rate}} </p>
+            <p class="_task_data" *ngIf="item.contractType == 'per_day'">Daily : {{item.currency}} {{item.rate}} </p>
+            <p class="_task_data" *ngIf="item.contractType == 'per_week'">Weekly : {{item.currency}} {{item.rate}} </p>
+            <p class="_task_data" *ngIf="item.contractType == 'per_month'">Monthly : {{item.currency}} {{item.rate}} </p>
+            <p class="_task_data" *ngIf="item.contractType == 'full_payout'">Full Payout : {{item.currency}} {{item.rate}} </p>
+            <p class="_task_data" *ngIf="item.contractType == 'partial_payout'">Partial Payout : {{item.currency}} {{item.rate}} </p>
+            <p class="_task_data" *ngIf="viewFinance(selectedSite)">Total Bill: {{item.totalBill}}</p>
+            <p class="_task_data" *ngIf="viewFinance(selectedSite)">Total Payment: {{item.totalPayment}}</p>
           </ion-item>
           <ion-item-options>
               <button ion-button color="secondary" (click)="editlabour(item)" icon-start>

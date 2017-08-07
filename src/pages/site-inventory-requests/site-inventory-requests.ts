@@ -26,7 +26,7 @@ export class SiteInventoryRequestsPage {
 	  requestStatus: 'Open', //Open->Accepted->Transfered->Shipped->Received->Complete
 	  transferOrder: {
 	      transferOrderId: '',
-	      estimatedDeliveryDays: '',
+	      estimatedDeliveryDays: 0,
 	      shippingVendor:'',
 	      shippingCost: 0,
 	      shippingType: '',

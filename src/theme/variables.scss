@@ -49,6 +49,8 @@ $colors: (
 );
 $refresher-icon-color: map-get($colors, primary);
 $refresher-text-color: map-get($colors, primary);
+$badge-md-border-radius: 0px;
+$badge-font-weight: normal;
 
 // App iOS Variables
 // --------------------------------------------------
